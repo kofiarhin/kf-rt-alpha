@@ -12,12 +12,12 @@ const getRandomText = () => sampleText[Math.floor(Math.random() * sampleText.len
 function App() {
   const [targetText, setTargetText] = useState(getRandomText());
   const [wordList, setWordList] = useState([]);
+  const [typedWords, setTypedWords] = useState([]); // <-- stores each typed word + correctness
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [isFinished, setIsFinished] = useState(false);
-  const [jumpIndex, setJumpIndex] = useState(null);
 
   const inputRef = useRef(null);
 
@@ -34,20 +34,15 @@ function App() {
     if (value.endsWith(' ')) {
       const typedWord = value.trim();
       const expectedWord = wordList[currentWordIndex];
+      const isCorrect = typedWord === expectedWord;
 
-      if (typedWord === expectedWord) {
-        setCurrentWordIndex(prev => prev + 1);
-        setUserInput('');
-        setJumpIndex(currentWordIndex);
+      setTypedWords([...typedWords, { typed: typedWord, correct: isCorrect }]);
+      setUserInput('');
+      setCurrentWordIndex(prev => prev + 1);
 
-        if (currentWordIndex + 1 === wordList.length) {
-          setEndTime(Date.now());
-          setIsFinished(true);
-        }
-
-        setTimeout(() => setJumpIndex(null), 300);
-      } else {
-        setUserInput(value); // keep the incorrect word
+      if (currentWordIndex + 1 === wordList.length) {
+        setEndTime(Date.now());
+        setIsFinished(true);
       }
     } else {
       setUserInput(value);
@@ -55,50 +50,25 @@ function App() {
   };
 
   const getWPM = () => {
-    const words = wordList.length;
+    const correctWords = typedWords.filter(w => w.correct).length;
     const minutes = (endTime - startTime) / 60000;
-    return Math.round(words / minutes);
+    return Math.round(correctWords / minutes);
   };
 
   const restartGame = () => {
     const newText = getRandomText();
     setTargetText(newText);
     setWordList(newText.split(' '));
+    setTypedWords([]);
     setCurrentWordIndex(0);
     setUserInput('');
     setStartTime(null);
     setEndTime(null);
     setIsFinished(false);
-    setJumpIndex(null);
     inputRef.current.focus();
   };
 
-  const renderWords = () => {
-    return wordList.map((word, i) => {
-      if (i < currentWordIndex) {
-        return (
-          <span key={i} className="word correct">
-            {word}{' '}
-          </span>
-        );
-      } else if (i === currentWordIndex) {
-        return (
-          <span key={i} className="word current">
-            {renderLiveInputFeedback(word, userInput)}
-            {' '}
-          </span>
-        );
-      } else {
-        return (
-          <span key={i} className="word">
-            {word}{' '}
-          </span>
-        );
-      }
-    });
-  };
-
-  const renderLiveInputFeedback = (expected, typed) => {
+  const renderWordWithFeedback = (typed, expected) => {
     const chars = expected.split('');
     return chars.map((char, i) => {
       let color = 'gray';
@@ -110,6 +80,31 @@ function App() {
           {char}
         </span>
       );
+    });
+  };
+
+  const renderWords = () => {
+    return wordList.map((word, i) => {
+      if (i < typedWords.length) {
+        const { typed } = typedWords[i];
+        return (
+          <span key={i} className="word typed">
+            {renderWordWithFeedback(typed, word)}{' '}
+          </span>
+        );
+      } else if (i === typedWords.length) {
+        return (
+          <span key={i} className="word current">
+            {renderWordWithFeedback(userInput, word)}{' '}
+          </span>
+        );
+      } else {
+        return (
+          <span key={i} className="word">
+            {word}{' '}
+          </span>
+        );
+      }
     });
   };
 
