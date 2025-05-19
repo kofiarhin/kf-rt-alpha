@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import sampleText from './textData'; // ✅ External text source
+import sampleText from './textData';
 
 const difficulties = {
   easy: 120,
@@ -8,7 +8,6 @@ const difficulties = {
   hard: 30
 };
 
-// ✅ Combines 2–3 random sentences each round
 const getRandomText = () => {
   const count = 2 + Math.floor(Math.random() * 2); // 2 or 3 sentences
   const shuffled = [...sampleText].sort(() => 0.5 - Math.random());
@@ -30,6 +29,7 @@ function App() {
   const [finalWPM, setFinalWPM] = useState(0);
   const [score, setScore] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
+  const [countdown, setCountdown] = useState(null);
 
   const [bestWPM, setBestWPM] = useState(() => {
     const stored = localStorage.getItem('bestWPM');
@@ -54,14 +54,30 @@ function App() {
     setTypedWords([]);
     setUserInput('');
     setCurrentWordIndex(0);
-    setIsStarted(true);
+    setIsStarted(false);
     setIsFinished(false);
     setFinalWPM(0);
     setTimerStarted(false);
     setScore(0);
     setIsGameOver(false);
+    setCountdown(3);
     clearInterval(timerRef.current);
-    setTimeout(() => inputRef.current?.focus(), 100);
+
+    let i = 3;
+    const interval = setInterval(() => {
+      i--;
+      if (i === 0) {
+        clearInterval(interval);
+        setCountdown('GO!');
+        setTimeout(() => {
+          setCountdown(null);
+          setIsStarted(true);
+          setTimeout(() => inputRef.current?.focus(), 100);
+        }, 1000);
+      } else {
+        setCountdown(i);
+      }
+    }, 1000);
   };
 
   const startTimer = () => {
@@ -166,6 +182,7 @@ function App() {
     setScore(0);
     setIsGameOver(false);
     setTimerStarted(false);
+    setCountdown(null);
   };
 
   const renderWordWithFeedback = (typed, expected) => {
@@ -211,6 +228,12 @@ function App() {
     <div className="App">
       <h1>Typing Game</h1>
 
+      {countdown !== null && (
+        <div className="countdown-overlay">
+          <div className="countdown-text">{countdown}</div>
+        </div>
+      )}
+
       {isStarted && (
         <div className="sticky-header">
           <span>Time Left: {formatTime(timeLeft)}</span>
@@ -219,7 +242,7 @@ function App() {
         </div>
       )}
 
-      {!isStarted && (
+      {!isStarted && countdown === null && (
         <div className="difficulty-select">
           <h2>Select Difficulty</h2>
           <button onClick={() => handleDifficultySelect('easy')}>Easy (2 min)</button>
@@ -247,7 +270,7 @@ function App() {
             type="text"
             value={userInput}
             onChange={handleChange}
-            disabled={isFinished || isGameOver}
+            disabled={isFinished || isGameOver || countdown !== null}
             autoComplete="off"
           />
 
