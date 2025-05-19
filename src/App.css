@@ -4,37 +4,25 @@
   font-family: sans-serif;
   text-align: center;
   padding: 0 20px;
-  background-color: transparent;
 }
 
-/* Fixed Timer (Top Left) */
-.timer-box {
-  position: fixed;
-  top: 20px;
-  left: 20px;
+/* Sticky Top Bar */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
   background-color: #222;
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 6px;
+  color: white;
+  padding: 10px 20px;
   font-size: 1rem;
   font-weight: bold;
-  z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Fixed Score (Top Right) */
-.score-box {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #222;
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: bold;
-  z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+.sticky-header .score {
+  text-align: right;
 }
 
 /* Difficulty Selection */
@@ -79,7 +67,6 @@
   padding: 10px 0;
   min-height: 100px;
   margin-bottom: 20px;
-  background-color: transparent;
 }
 
 /* Words */
