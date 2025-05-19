@@ -1,4 +1,4 @@
-Here’s an expanded list with 10 more words, each with 3 hints:
+
 
 const words = [
   {
@@ -84,6 +84,3 @@ const words = [
 ];
 
 export default words;
-
-Let me know if you want more words, categories (e.g., animals, tech, geography), or difficulty levels.
-
