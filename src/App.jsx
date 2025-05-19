@@ -9,14 +9,16 @@ const words = [
 ];
 
 const shuffle = (word) => {
-  return word
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('');
+  const arr = word.split('');
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr.join('');
 };
 
 const App = () => {
-  const [current, setCurrent] = useState({});
+  const [current, setCurrent] = useState({ word: '', hint: '' });
   const [scrambled, setScrambled] = useState('');
   const [guess, setGuess] = useState('');
   const [message, setMessage] = useState('');
@@ -28,15 +30,16 @@ const App = () => {
 
   const getNewWord = () => {
     const random = words[Math.floor(Math.random() * words.length)];
+    const scrambledWord = shuffle(random.word);
     setCurrent(random);
-    setScrambled(shuffle(random.word));
+    setScrambled(scrambledWord);
     setGuess('');
     setMessage('');
     setShowAnswer(false);
   };
 
   const checkGuess = () => {
-    if (guess.toLowerCase() === current.word.toLowerCase()) {
+    if (guess.trim().toLowerCase() === current.word.toLowerCase()) {
       setMessage('Correct!');
     } else {
       setMessage('Try again.');
@@ -45,21 +48,22 @@ const App = () => {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>Word Scramble Game</h1>
+      <h1 style={styles.title}>Word Scramble</h1>
 
-      <p><strong>Scrambled:</strong> {scrambled}</p>
+      <p><strong>Scrambled Word:</strong> {scrambled}</p>
       <p><strong>Hint:</strong> {current.hint}</p>
 
       <input
         type="text"
         value={guess}
         onChange={(e) => setGuess(e.target.value)}
-        placeholder="Your guess"
+        placeholder="Type your guess"
         style={styles.input}
       />
+
       <div style={styles.buttonRow}>
         <button onClick={checkGuess} style={styles.button}>Submit</button>
-        <button onClick={() => setShowAnswer(true)} style={styles.button}>Reveal Word</button>
+        <button onClick={() => setShowAnswer(true)} style={styles.button}>Reveal</button>
         <button onClick={getNewWord} style={styles.button}>Next</button>
       </div>
 
@@ -71,34 +75,38 @@ const App = () => {
 
 const styles = {
   container: {
-    fontFamily: 'Arial, sans-serif',
-    padding: '20px',
+    color: '#000',
+    backgroundColor: '#fff',
+    padding: '40px',
     maxWidth: '500px',
-    margin: 'auto',
+    margin: '0 auto',
+    fontFamily: 'sans-serif',
     textAlign: 'center',
-    backgroundColor: '#f5f5f5',
-    borderRadius: '10px',
-    marginTop: '50px',
   },
   title: {
-    fontSize: '2rem',
-    marginBottom: '1rem',
+    fontSize: '1.8rem',
+    marginBottom: '20px',
   },
   input: {
     padding: '10px',
-    fontSize: '1rem',
     width: '80%',
-    marginBottom: '1rem',
+    fontSize: '1rem',
+    marginBottom: '20px',
+    border: '1px solid #000',
+    outline: 'none',
   },
   buttonRow: {
     display: 'flex',
-    gap: '10px',
     justifyContent: 'center',
-    marginTop: '10px',
+    gap: '10px',
+    marginBottom: '20px',
   },
   button: {
-    padding: '10px 15px',
+    padding: '8px 16px',
     fontSize: '1rem',
+    backgroundColor: '#000',
+    color: '#fff',
+    border: 'none',
     cursor: 'pointer',
   },
 };
