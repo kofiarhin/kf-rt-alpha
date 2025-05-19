@@ -175,6 +175,12 @@ function App() {
     <div className="App">
       <h1>Typing Game</h1>
 
+      {isStarted && (
+        <div className="timer-box">
+          Time Left: {formatTime(timeLeft)}
+        </div>
+      )}
+
       {!isStarted && (
         <div className="difficulty-select">
           <h2>Select Difficulty</h2>
@@ -187,7 +193,6 @@ function App() {
       {isStarted && (
         <>
           <div className="stats">
-            <p>Time Left: {formatTime(timeLeft)}</p>
             <p>WPM: {getWPM()}</p>
           </div>
           <div className="prompt">{renderWords()}</div>
@@ -198,7 +203,6 @@ function App() {
             onChange={handleChange}
             disabled={isFinished}
             autoComplete="off"
-            style={{ width: '100%', padding: '10px', fontSize: '1.2rem' }}
           />
           {isFinished && (
             <div className="result">
