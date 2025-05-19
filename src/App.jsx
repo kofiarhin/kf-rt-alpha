@@ -25,8 +25,7 @@ const App = () => {
   const [streak, setStreak] = useState(0);
   const [hintIndex, setHintIndex] = useState(0);
   const [statusClass, setStatusClass] = useState("");
-  const [showUnscrambledBeforeGameOver, setShowUnscrambledBeforeGameOver] =
-    useState(false);
+  const [showUnscrambledBeforeGameOver, setShowUnscrambledBeforeGameOver] = useState(false);
 
   useEffect(() => {
     getNewWord();
@@ -54,7 +53,6 @@ const App = () => {
     setShowAnswer(false);
     setFadeKey((prev) => prev + 1);
     setShuffleCount(0);
-    setStreak(0);
     setHintIndex(0);
     setStatusClass("");
   };
@@ -73,16 +71,15 @@ const App = () => {
     if (trimmedGuess === correctAnswer) {
       const newStreak = streak + 1;
 
-      if (newStreak >= 3) {
+      if (newStreak % 3 === 0) {
         setMessage("🔥 Streak Bonus! +10 Points");
         setScore((prev) => prev + 10);
-        setStreak(0);
       } else {
         setMessage("Correct!");
         setScore((prev) => prev + 3);
-        setStreak(newStreak);
       }
 
+      setStreak(newStreak);
       setMaxShuffle((prev) => prev + 1);
       setStatusClass("correct");
 
