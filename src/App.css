@@ -1,9 +1,10 @@
+/* Base Layout */
 .App {
   max-width: 800px;
-  margin: 80px auto;
+  margin: 60px auto;
   font-family: sans-serif;
   text-align: center;
-  padding: 0 20px;
+  padding: 0 16px;
 }
 
 /* Sticky Header */
@@ -11,10 +12,11 @@
   position: sticky;
   top: 0;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   background-color: #222;
   color: white;
-  padding: 10px 20px;
+  padding: 10px 16px;
   font-size: 1rem;
   font-weight: bold;
   z-index: 999;
@@ -24,6 +26,7 @@
 .sticky-header span {
   flex: 1;
   text-align: center;
+  margin-bottom: 5px;
 }
 
 .sticky-header .score {
@@ -34,7 +37,35 @@
   text-align: left;
 }
 
-/* Difficulty Select */
+/* Responsive: stack header items on small screens */
+@media (max-width: 600px) {
+  .sticky-header {
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.95rem;
+  }
+
+  .sticky-header span {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .prompt {
+    font-size: 1.2rem;
+  }
+
+  .active-word {
+    font-size: 1.4rem;
+  }
+
+  input[type="text"] {
+    font-size: 1.1rem;
+    padding: 10px;
+  }
+}
+
+/* Difficulty Buttons */
 .difficulty-select h2 {
   margin-bottom: 20px;
 }
@@ -42,7 +73,7 @@
 .difficulty-select button,
 .result button {
   margin: 10px;
-  padding: 10px 25px;
+  padding: 10px 20px;
   font-size: 1rem;
   border: none;
   border-radius: 5px;
@@ -57,7 +88,7 @@
   background-color: #222;
 }
 
-/* Stats */
+/* Stats (WPM display) */
 .stats {
   display: flex;
   justify-content: center;
@@ -66,7 +97,7 @@
   font-weight: bold;
 }
 
-/* Prompt */
+/* Typing Prompt */
 .prompt {
   font-size: 1.5rem;
   line-height: 2.2rem;
@@ -78,10 +109,11 @@
   margin-bottom: 20px;
 }
 
-/* Word Styling */
+/* Word Styles */
 .word {
-  margin: 0 6px;
+  margin: 0 4px;
   color: gray;
+  word-break: break-word;
 }
 
 .word.typed {
@@ -98,7 +130,7 @@
   color: black;
 }
 
-/* Input */
+/* Input Field */
 input[type="text"] {
   width: 100%;
   padding: 12px 16px;
@@ -116,7 +148,7 @@ input[type="text"]:disabled {
   color: #999;
 }
 
-/* Game Over */
+/* Game Over Styling */
 .game-over {
   margin-top: 20px;
   color: red;
@@ -130,7 +162,7 @@ input[type="text"]:disabled {
   text-shadow: 2px 2px black;
 }
 
-/* Result */
+/* Results */
 .result h2 {
   margin-top: 30px;
   font-size: 1.8rem;
