@@ -56,15 +56,15 @@ const App = () => {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>Word Scramble</h1>
+      <h1 style={styles.title}>Guess The Word</h1>
 
       <div key={fadeKey} style={styles.fadeIn}>
         <h2>
           <strong>Scrambled Word:</strong>
         </h2>
 
-        <h1 className="scrambled"> {scrambled} </h1>
-        <p>
+        <h1 style={styles.scrambled}> {scrambled} </h1>
+        <p style={styles.hint}>
           <strong>Hint:</strong> {current.hint}
         </p>
       </div>
@@ -148,6 +148,12 @@ const styles = {
   message: {
     fontWeight: "bold",
     marginTop: "10px",
+  },
+  scrambled: {
+    fontSize: "4rem",
+  },
+  hint: {
+    fontSize: "1.2rem",
   },
 };
 
