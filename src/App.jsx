@@ -27,6 +27,7 @@ function App() {
   const [userInput, setUserInput] = useState('');
   const [isStarted, setIsStarted] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [finalWPM, setFinalWPM] = useState(0);
 
   const inputRef = useRef(null);
   const timerRef = useRef(null);
@@ -37,22 +38,26 @@ function App() {
 
   const handleDifficultySelect = (level) => {
     const time = difficulties[level];
+    const text = getRandomText();
+    const words = text.split(' ');
+
     setDifficulty(level);
     setTimeLeft(time);
-    setTargetText(getRandomText());
-    setIsStarted(true);
-    setIsFinished(false);
+    setTargetText(text);
+    setWordList(words);
     setTypedWords([]);
     setUserInput('');
     setCurrentWordIndex(0);
-    setWordList(getRandomText().split(' '));
+    setIsStarted(true);
+    setIsFinished(false);
+    setFinalWPM(0);
 
-    // Start countdown
+    clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
           clearInterval(timerRef.current);
-          setIsFinished(true);
+          finishGame();
           return 0;
         }
         return prev - 1;
@@ -74,19 +79,30 @@ function App() {
       const expectedWord = wordList[currentWordIndex];
       const isCorrect = typedWord === expectedWord;
 
-      setTypedWords([...typedWords, { typed: typedWord, correct: isCorrect }]);
+      const updatedWords = [...typedWords, { typed: typedWord, correct: isCorrect }];
+      setTypedWords(updatedWords);
       setUserInput('');
-      setCurrentWordIndex(prev => prev + 1);
+      const nextIndex = currentWordIndex + 1;
+      setCurrentWordIndex(nextIndex);
+
+      if (nextIndex === wordList.length) {
+        clearInterval(timerRef.current);
+        finishGame(updatedWords);
+      }
     } else {
       setUserInput(value);
     }
   };
 
-  const getWPM = () => {
-    const correctWords = typedWords.filter(w => w.correct).length;
-    const minutes = difficulties[difficulty] / 60;
-    return Math.round(correctWords / minutes);
+  const finishGame = (finalWords = typedWords) => {
+    setIsFinished(true);
+    const correctWords = finalWords.filter(w => w.correct).length;
+    const totalTime = difficulties[difficulty];
+    const wpm = Math.round((correctWords / totalTime) * 60);
+    setFinalWPM(wpm);
   };
+
+  const getWPM = () => finalWPM;
 
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -95,13 +111,21 @@ function App() {
   };
 
   const restartGame = () => {
+    handleDifficultySelect(difficulty);
+  };
+
+  const resetGame = () => {
     clearInterval(timerRef.current);
     setDifficulty(null);
+    setTimeLeft(0);
+    setTargetText('');
+    setWordList([]);
+    setTypedWords([]);
+    setUserInput('');
+    setCurrentWordIndex(0);
     setIsStarted(false);
     setIsFinished(false);
-    setUserInput('');
-    setTypedWords([]);
-    setTimeLeft(0);
+    setFinalWPM(0);
   };
 
   const renderWordWithFeedback = (typed, expected) => {
@@ -173,10 +197,11 @@ function App() {
             style={{ width: '100%', padding: '10px', fontSize: '1.2rem' }}
           />
           {isFinished && (
-            <div>
-              <h2>Time's Up!</h2>
+            <div className="result">
+              <h2>Game Over</h2>
               <h3>Your WPM: {getWPM()}</h3>
-              <button onClick={restartGame}>Play Again</button>
+              <button onClick={restartGame}>Restart (Same Difficulty)</button>
+              <button onClick={resetGame}>Change Difficulty</button>
             </div>
           )}
         </>
