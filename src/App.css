@@ -1,3 +1,4 @@
+/* Global App Layout */
 .App {
   max-width: 800px;
   margin: 80px auto;
@@ -7,7 +8,7 @@
   background-color: transparent;
 }
 
-/* Fixed Timer */
+/* Fixed Timer Box (Top-Left) */
 .timer-box {
   position: fixed;
   top: 20px;
@@ -19,10 +20,10 @@
   font-size: 1rem;
   font-weight: bold;
   z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Difficulty Selection */
+/* Difficulty Selection Buttons */
 .difficulty-select h2 {
   margin-bottom: 20px;
 }
@@ -45,15 +46,17 @@
   background-color: #222;
 }
 
-/* Stats Panel */
+/* Stats Display */
 .stats {
   display: flex;
   justify-content: center;
+  gap: 40px;
   font-size: 1.1rem;
-  margin: 10px auto 20px auto;
+  margin: 20px auto;
+  font-weight: bold;
 }
 
-/* Prompt Display */
+/* Word Display Area */
 .prompt {
   font-size: 1.5rem;
   line-height: 2.2rem;
@@ -66,7 +69,7 @@
   background-color: transparent;
 }
 
-/* Word Styling */
+/* Word Styles */
 .word {
   margin: 0 6px;
   color: gray;
@@ -104,7 +107,21 @@ input[type="text"]:disabled {
   color: #999;
 }
 
-/* Results Display */
+/* Game Over Display */
+.game-over {
+  margin-top: 20px;
+  color: red;
+  font-weight: bold;
+  text-align: center;
+}
+
+.game-over h1 {
+  font-size: 3.5rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px black;
+}
+
+/* Final Result Display */
 .result h2 {
   margin-top: 30px;
   font-size: 1.8rem;
