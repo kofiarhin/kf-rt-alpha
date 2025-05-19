@@ -22,8 +22,7 @@ function App() {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    const words = targetText.split(' ');
-    setWordList(words);
+    setWordList(targetText.split(' '));
     inputRef.current.focus();
   }, [targetText]);
 
@@ -32,7 +31,6 @@ function App() {
 
     if (!startTime) setStartTime(Date.now());
 
-    // If user hits space after a correct word
     if (value.endsWith(' ')) {
       const typedWord = value.trim();
       const expectedWord = wordList[currentWordIndex];
@@ -49,8 +47,7 @@ function App() {
 
         setTimeout(() => setJumpIndex(null), 300);
       } else {
-        // Block progression if incorrect
-        // Optional: visual error feedback here
+        setUserInput(value); // keep the incorrect word
       }
     } else {
       setUserInput(value);
@@ -66,4 +63,77 @@ function App() {
   const restartGame = () => {
     const newText = getRandomText();
     setTargetText(newText);
-    setWordList(newText
+    setWordList(newText.split(' '));
+    setCurrentWordIndex(0);
+    setUserInput('');
+    setStartTime(null);
+    setEndTime(null);
+    setIsFinished(false);
+    setJumpIndex(null);
+    inputRef.current.focus();
+  };
+
+  const renderWords = () => {
+    return wordList.map((word, i) => {
+      if (i < currentWordIndex) {
+        return (
+          <span key={i} className="word correct">
+            {word}{' '}
+          </span>
+        );
+      } else if (i === currentWordIndex) {
+        return (
+          <span key={i} className="word current">
+            {renderLiveInputFeedback(word, userInput)}
+            {' '}
+          </span>
+        );
+      } else {
+        return (
+          <span key={i} className="word">
+            {word}{' '}
+          </span>
+        );
+      }
+    });
+  };
+
+  const renderLiveInputFeedback = (expected, typed) => {
+    const chars = expected.split('');
+    return chars.map((char, i) => {
+      let color = 'gray';
+      if (i < typed.length) {
+        color = typed[i] === char ? 'green' : 'red';
+      }
+      return (
+        <span key={i} style={{ color }}>
+          {char}
+        </span>
+      );
+    });
+  };
+
+  return (
+    <div className="App">
+      <h1>Typing Game</h1>
+      <div className="prompt">{renderWords()}</div>
+      <input
+        ref={inputRef}
+        type="text"
+        value={userInput}
+        onChange={handleChange}
+        disabled={isFinished}
+        autoComplete="off"
+        style={{ width: '100%', padding: '10px', fontSize: '1.2rem' }}
+      />
+      {isFinished && (
+        <div>
+          <h2>WPM: {getWPM()}</h2>
+          <button onClick={restartGame}>Restart</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
