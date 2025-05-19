@@ -87,7 +87,6 @@ function App() {
     const lastCharTyped = value[lastCharIndex];
     const expectedChar = expected[lastCharIndex];
 
-    // scoring per character
     if (lastCharTyped !== undefined) {
       if (lastCharTyped === expectedChar) {
         setScore(prev => prev + 1);
@@ -201,10 +200,10 @@ function App() {
       <h1>Typing Game</h1>
 
       {isStarted && (
-        <>
-          <div className="timer-box">Time Left: {formatTime(timeLeft)}</div>
-          <div className="score-box">Score: {score}</div>
-        </>
+        <div className="sticky-header">
+          <span>Time Left: {formatTime(timeLeft)}</span>
+          <span className="score">Score: {score}</span>
+        </div>
       )}
 
       {!isStarted && (
