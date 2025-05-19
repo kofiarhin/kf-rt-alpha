@@ -37,7 +37,7 @@
   text-align: left;
 }
 
-/* Responsive Header */
+/* Mobile Responsive */
 @media (max-width: 600px) {
   .sticky-header {
     flex-direction: column;
@@ -52,16 +52,33 @@
   }
 
   .prompt {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    padding: 8px;
+    line-height: 1.8rem;
+    word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .word {
+    margin: 2px;
   }
 
   .active-word {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
 
   input[type="text"] {
     font-size: 1.1rem;
     padding: 10px;
+    width: 100%;
+  }
+
+  .difficulty-select button,
+  .result button,
+  .quit-button button {
+    width: 100%;
+    margin-bottom: 10px;
   }
 }
 
@@ -107,6 +124,7 @@
   padding: 10px 0;
   min-height: 100px;
   margin-bottom: 20px;
+  word-break: break-word;
 }
 
 /* Word Styling */
