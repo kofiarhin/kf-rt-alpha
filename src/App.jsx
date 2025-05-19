@@ -12,24 +12,44 @@ const getRandomText = () => sampleText[Math.floor(Math.random() * sampleText.len
 function App() {
   const [targetText, setTargetText] = useState(getRandomText());
   const [wordList, setWordList] = useState([]);
-  const [typedWords, setTypedWords] = useState([]); // <-- stores each typed word + correctness
+  const [typedWords, setTypedWords] = useState([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [isFinished, setIsFinished] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   const inputRef = useRef(null);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     setWordList(targetText.split(' '));
     inputRef.current.focus();
   }, [targetText]);
 
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => clearInterval(timerRef.current);
+  }, []);
+
+  const startTimer = () => {
+    timerRef.current = setInterval(() => {
+      setElapsedSeconds(prev => prev + 1);
+    }, 1000);
+  };
+
+  const stopTimer = () => {
+    clearInterval(timerRef.current);
+  };
+
   const handleChange = (e) => {
     const value = e.target.value;
 
-    if (!startTime) setStartTime(Date.now());
+    if (!startTime) {
+      setStartTime(Date.now());
+      startTimer();
+    }
 
     if (value.endsWith(' ')) {
       const typedWord = value.trim();
@@ -43,6 +63,7 @@ function App() {
       if (currentWordIndex + 1 === wordList.length) {
         setEndTime(Date.now());
         setIsFinished(true);
+        stopTimer();
       }
     } else {
       setUserInput(value);
@@ -51,8 +72,14 @@ function App() {
 
   const getWPM = () => {
     const correctWords = typedWords.filter(w => w.correct).length;
-    const minutes = (endTime - startTime) / 60000;
-    return Math.round(correctWords / minutes);
+    const minutes = elapsedSeconds / 60;
+    return minutes > 0 ? Math.round(correctWords / minutes) : 0;
+  };
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
   };
 
   const restartGame = () => {
@@ -65,12 +92,13 @@ function App() {
     setStartTime(null);
     setEndTime(null);
     setIsFinished(false);
+    setElapsedSeconds(0);
     inputRef.current.focus();
+    clearInterval(timerRef.current);
   };
 
   const renderWordWithFeedback = (typed, expected) => {
-    const chars = expected.split('');
-    return chars.map((char, i) => {
+    return expected.split('').map((char, i) => {
       let color = 'gray';
       if (i < typed.length) {
         color = typed[i] === char ? 'green' : 'red';
@@ -111,6 +139,10 @@ function App() {
   return (
     <div className="App">
       <h1>Typing Game</h1>
+      <div className="stats">
+        <p>Time: {formatTime(elapsedSeconds)}</p>
+        <p>WPM: {getWPM()}</p>
+      </div>
       <div className="prompt">{renderWords()}</div>
       <input
         ref={inputRef}
@@ -123,7 +155,6 @@ function App() {
       />
       {isFinished && (
         <div>
-          <h2>WPM: {getWPM()}</h2>
           <button onClick={restartGame}>Restart</button>
         </div>
       )}
