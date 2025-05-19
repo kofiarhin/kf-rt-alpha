@@ -25,14 +25,22 @@ const App = () => {
   const [streak, setStreak] = useState(0);
   const [hintIndex, setHintIndex] = useState(0);
   const [statusClass, setStatusClass] = useState("");
+  const [showUnscrambledBeforeGameOver, setShowUnscrambledBeforeGameOver] =
+    useState(false);
 
   useEffect(() => {
     getNewWord();
   }, []);
 
   useEffect(() => {
-    if (score < 0) setGameOver(true);
-  }, [score]);
+    if (score < 0 && !gameOver) {
+      setShowUnscrambledBeforeGameOver(true);
+      setTimeout(() => {
+        setShowUnscrambledBeforeGameOver(false);
+        setGameOver(true);
+      }, 3000);
+    }
+  }, [score, gameOver]);
 
   const getNewWord = (deductPoint = false) => {
     if (gameOver) return;
@@ -56,7 +64,6 @@ const App = () => {
     setScrambled(shuffle(current.word));
     setShuffleCount((prev) => prev + 1);
     setFadeKey((prev) => prev + 1);
-    setStatusClass("");
   };
 
   const checkGuess = () => {
@@ -65,8 +72,6 @@ const App = () => {
 
     if (trimmedGuess === correctAnswer) {
       const newStreak = streak + 1;
-
-      setStatusClass("correct");
 
       if (newStreak >= 3) {
         setMessage("🔥 Streak Bonus! +10 Points");
@@ -79,8 +84,10 @@ const App = () => {
       }
 
       setMaxShuffle((prev) => prev + 1);
+      setStatusClass("correct");
 
       setTimeout(() => {
+        setStatusClass("");
         getNewWord();
       }, 800);
     } else {
@@ -88,6 +95,8 @@ const App = () => {
       setScore((prev) => prev - 1);
       setStreak(0);
       setStatusClass("wrong");
+
+      setTimeout(() => setStatusClass(""), 800);
     }
   };
 
@@ -96,10 +105,18 @@ const App = () => {
     setShowAnswer(true);
     setScore((prev) => prev - 1);
     setStreak(0);
-    setStatusClass("");
     setTimeout(() => {
       getNewWord();
     }, 2000);
+  };
+
+  const nextHint = () => {
+    if (gameOver) return;
+    if (hintIndex < current.hints.length - 1) {
+      setHintIndex((prev) => prev + 1);
+      setScore((prev) => prev - 1);
+      setMessage("");
+    }
   };
 
   const restartGame = () => {
@@ -108,15 +125,18 @@ const App = () => {
     setShuffleCount(0);
     setGameOver(false);
     setStreak(0);
-    setHintIndex(0);
     setStatusClass("");
     getNewWord();
   };
 
-  const nextHint = () => {
-    setScore((prev) => prev - 1);
-    setHintIndex((prev) => (prev + 1) % current.hints.length);
-  };
+  if (showUnscrambledBeforeGameOver) {
+    return (
+      <div className="container">
+        <h1 className="scrambled wrong">{current.word}</h1>
+        <p className="message">Game over incoming...</p>
+      </div>
+    );
+  }
 
   if (gameOver) {
     return (
