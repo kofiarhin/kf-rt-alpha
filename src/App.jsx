@@ -11,6 +11,12 @@ function shuffle(word) {
   return arr.join("");
 }
 
+const difficultySettings = {
+  easy: 15,
+  medium: 10,
+  hard: 5,
+};
+
 const App = () => {
   const [current, setCurrent] = useState({ word: "", hints: [] });
   const [scrambled, setScrambled] = useState("");
@@ -26,9 +32,9 @@ const App = () => {
   const [hintIndex, setHintIndex] = useState(0);
   const [statusClass, setStatusClass] = useState("");
   const [showUnscrambledBeforeGameOver, setShowUnscrambledBeforeGameOver] = useState(false);
-  const [timer, setTimer] = useState(10);
+  const [timer, setTimer] = useState(difficultySettings.medium);
+  const [difficulty, setDifficulty] = useState("medium"); // easy, medium, hard
 
-  // Keep a ref to timer interval to clear properly
   const timerRef = useRef(null);
 
   useEffect(() => {
@@ -45,7 +51,6 @@ const App = () => {
     }
   }, [score, gameOver]);
 
-  // Timer effect
   useEffect(() => {
     if (gameOver) {
       clearInterval(timerRef.current);
@@ -56,6 +61,7 @@ const App = () => {
       return;
     }
 
+    clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setTimer((prev) => {
         if (prev === 1) {
@@ -69,6 +75,11 @@ const App = () => {
 
     return () => clearInterval(timerRef.current);
   }, [current, showAnswer, gameOver]);
+
+  useEffect(() => {
+    // Reset timer on difficulty change
+    setTimer(difficultySettings[difficulty]);
+  }, [difficulty]);
 
   const handleTimeout = () => {
     setMessage("Time's up! Revealing answer...");
@@ -98,7 +109,7 @@ const App = () => {
     setShuffleCount(0);
     setHintIndex(0);
     setStatusClass("");
-    setTimer(10);
+    setTimer(difficultySettings[difficulty]);
   };
 
   const reshuffleWord = () => {
@@ -172,7 +183,7 @@ const App = () => {
     setGameOver(false);
     setStreak(0);
     setStatusClass("");
-    setTimer(10);
+    setTimer(difficultySettings[difficulty]);
     getNewWord();
   };
 
@@ -201,6 +212,23 @@ const App = () => {
       <h3 className="score">
         Score: {score} <span> streak: {streak} </span>
       </h3>
+      <div style={{ marginBottom: 12 }}>
+        <label><strong>Difficulty:</strong> </label>
+        {["easy", "medium", "hard"].map((level) => (
+          <button
+            key={level}
+            disabled={showAnswer === false && timer !== difficultySettings[difficulty]} // lock difficulty when round active
+            className={difficulty === level ? "button active" : "button"}
+            onClick={() => {
+              if (showAnswer || timer === difficultySettings[difficulty]) setDifficulty(level);
+            }}
+            style={{ marginRight: 8 }}
+          >
+            {level.charAt(0).toUpperCase() + level.slice(1)}
+          </button>
+        ))}
+      </div>
+
       <h3>Time Left: {timer}s</h3>
       <h1 className="title">Guess The Word</h1>
       <div key={fadeKey} className={`fadeIn ${statusClass}`}>
