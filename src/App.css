@@ -5,6 +5,7 @@
   font-family: sans-serif;
   text-align: center;
   padding: 0 20px;
+  background-color: transparent; /* clear background */
 }
 
 /* Difficulty Selection */
@@ -46,11 +47,11 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  padding: 10px;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  min-height: 120px;
+  padding: 10px 0;
+  border-radius: 0;
+  min-height: 100px;
   margin-bottom: 20px;
+  background-color: transparent;
 }
 
 /* Word Styling */
@@ -82,10 +83,13 @@ input[type="text"] {
   border-radius: 5px;
   box-sizing: border-box;
   margin-bottom: 20px;
+  background-color: transparent;
+  color: black;
 }
 
 input[type="text"]:disabled {
-  background-color: #eee;
+  background-color: #f2f2f2;
+  color: #999;
 }
 
 /* Results Display */
