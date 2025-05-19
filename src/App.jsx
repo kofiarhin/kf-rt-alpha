@@ -27,18 +27,20 @@ function App() {
     inputRef.current.focus();
   }, [targetText]);
 
-  const handleKeyDown = (e) => {
-    if (isFinished) return;
+  const handleChange = (e) => {
+    const value = e.target.value;
 
     if (!startTime) setStartTime(Date.now());
 
-    if (e.key === ' ') {
-      e.preventDefault();
+    // If user hits space after a correct word
+    if (value.endsWith(' ')) {
+      const typedWord = value.trim();
+      const expectedWord = wordList[currentWordIndex];
 
-      if (userInput.trim() === wordList[currentWordIndex]) {
-        setJumpIndex(currentWordIndex);
+      if (typedWord === expectedWord) {
         setCurrentWordIndex(prev => prev + 1);
         setUserInput('');
+        setJumpIndex(currentWordIndex);
 
         if (currentWordIndex + 1 === wordList.length) {
           setEndTime(Date.now());
@@ -46,17 +48,13 @@ function App() {
         }
 
         setTimeout(() => setJumpIndex(null), 300);
+      } else {
+        // Block progression if incorrect
+        // Optional: visual error feedback here
       }
-    } else if (e.key.length === 1 || e.key === 'Backspace') {
-      // Allow character input & backspace
-      return;
     } else {
-      e.preventDefault(); // Block non-character junk
+      setUserInput(value);
     }
-  };
-
-  const handleChange = (e) => {
-    setUserInput(e.target.value);
   };
 
   const getWPM = () => {
@@ -68,23 +66,4 @@ function App() {
   const restartGame = () => {
     const newText = getRandomText();
     setTargetText(newText);
-    setWordList(newText.split(' '));
-    setCurrentWordIndex(0);
-    setUserInput('');
-    setStartTime(null);
-    setEndTime(null);
-    setIsFinished(false);
-    setJumpIndex(null);
-    inputRef.current.focus();
-  };
-
-  const renderWords = () => {
-    return wordList.map((word, i) => {
-      let className = 'word';
-      if (i < currentWordIndex) className += ' correct';
-      else if (i === currentWordIndex) className += ' current';
-      if (i === jumpIndex) className += ' jump';
-
-      return (
-        <span key={i} className={className}>
-          {
+    setWordList(newText
