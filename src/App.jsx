@@ -1,13 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-
-const sampleText = [
-  'The quick brown fox jumps over the lazy dog',
-  'Typing games improve your speed and accuracy',
-  'React is a powerful JavaScript library for building UIs',
-  'Discipline is the bridge between goals and accomplishment',
-  'Knowledge is power but enthusiasm pulls the switch'
-];
+import sampleText from './textData'; // ✅ External text source
 
 const difficulties = {
   easy: 120,
@@ -15,7 +8,12 @@ const difficulties = {
   hard: 30
 };
 
-const getRandomText = () => sampleText[Math.floor(Math.random() * sampleText.length)];
+// ✅ Combines 2–3 random sentences each round
+const getRandomText = () => {
+  const count = 2 + Math.floor(Math.random() * 2); // 2 or 3 sentences
+  const shuffled = [...sampleText].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count).join('. ') + '.';
+};
 
 function App() {
   const [difficulty, setDifficulty] = useState(null);
@@ -33,7 +31,6 @@ function App() {
   const [score, setScore] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
 
-  // Best WPM per difficulty
   const [bestWPM, setBestWPM] = useState(() => {
     const stored = localStorage.getItem('bestWPM');
     return stored ? JSON.parse(stored) : { easy: 0, medium: 0, hard: 0 };
