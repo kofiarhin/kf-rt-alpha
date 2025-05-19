@@ -1,27 +1,15 @@
 import React, { useState, useEffect } from "react";
+import words from "./words";
+import "./App.css";
 
-const words = [
-  {
-    word: "subconscious",
-    hint: "Part of the mind that runs in the background",
-  },
-  { word: "meditation", hint: "Practice of calming the mind" },
-  { word: "visualization", hint: "Mental image of a desired reality" },
-  { word: "habit", hint: "A routine or practice done regularly" },
-  {
-    word: "affirmation",
-    hint: "Positive statement repeated to change beliefs",
-  },
-];
-
-const shuffle = (word) => {
+function shuffle(word) {
   const arr = word.split("");
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr.join("");
-};
+}
 
 const App = () => {
   const [current, setCurrent] = useState({ word: "", hint: "" });
@@ -29,49 +17,98 @@ const App = () => {
   const [guess, setGuess] = useState("");
   const [message, setMessage] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
+  const [score, setScore] = useState(0);
   const [fadeKey, setFadeKey] = useState(0);
+  const [shuffleCount, setShuffleCount] = useState(0);
+  const [maxShuffle, setMaxShuffle] = useState(3);
+  const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
     getNewWord();
   }, []);
 
-  const getNewWord = () => {
+  useEffect(() => {
+    if (score < 0) setGameOver(true);
+  }, [score]);
+
+  const getNewWord = (deductPoint = false) => {
+    if (gameOver) return;
+    if (deductPoint) setScore((prev) => prev - 1);
+
     const random = words[Math.floor(Math.random() * words.length)];
-    const scrambledWord = shuffle(random.word);
     setCurrent(random);
-    setScrambled(scrambledWord);
+    setScrambled(shuffle(random.word));
     setGuess("");
     setMessage("");
     setShowAnswer(false);
-    setFadeKey((prev) => prev + 1); // Triggers re-animation
+    setFadeKey((prev) => prev + 1);
+  };
+
+  const reshuffleWord = () => {
+    if (shuffleCount >= maxShuffle) return;
+    setScrambled(shuffle(current.word));
+    setShuffleCount((prev) => prev + 1);
+    setFadeKey((prev) => prev + 1);
   };
 
   const checkGuess = () => {
     if (guess.trim().toLowerCase() === current.word.toLowerCase()) {
       setMessage("Correct!");
+      setScore((prev) => prev + 3);
+      setMaxShuffle((prev) => prev + 1);
+      setTimeout(() => {
+        getNewWord();
+      }, 800);
     } else {
       setMessage("Try again.");
+      setScore((prev) => prev - 1);
     }
   };
 
+  const revealAnswer = () => {
+    if (gameOver) return;
+    setShowAnswer(true);
+    setScore((prev) => prev - 1);
+    setTimeout(() => {
+      getNewWord();
+    }, 2000);
+  };
+
+  const restartGame = () => {
+    setScore(0);
+    setMaxShuffle(3);
+    setShuffleCount(0);
+    setGameOver(false);
+    getNewWord();
+  };
+
+  if (gameOver) {
+    return (
+      <div className="container">
+        <h1 className="game-over">GAME OVER</h1>
+        <button className="button" onClick={restartGame}>
+          Restart
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Guess The Word</h1>
+    <div className="container">
+      <h1 className="title">Guess The Word</h1>
+      <h3 className="score">Score: {score}</h3>
 
-      <div key={fadeKey} style={styles.fadeIn}>
-        <h2>
-          <strong>Scrambled Word:</strong>
-        </h2>
-
-        <h1 style={styles.scrambled}> {scrambled} </h1>
-        <p style={styles.hint}>
+      <div key={fadeKey} className="fadeIn">
+        <h2 className="label">Scrambled Word:</h2>
+        <h1 className="scrambled">{scrambled}</h1>
+        <p className="hint">
           <strong>Hint:</strong> {current.hint}
         </p>
       </div>
 
-      {message && <p style={styles.message}>{message}</p>}
+      {message && <p className="message">{message}</p>}
       {showAnswer && (
-        <h2>
+        <h2 className="answer">
           <strong>Answer:</strong> {current.word}
         </h2>
       )}
@@ -81,111 +118,30 @@ const App = () => {
         value={guess}
         onChange={(e) => setGuess(e.target.value)}
         placeholder="Type your guess"
-        style={styles.input}
+        className="input"
       />
 
-      <div style={styles.buttonRow}>
-        <button onClick={checkGuess} style={styles.button}>
+      <div className="buttonRow">
+        <button onClick={checkGuess} className="button">
           Submit
         </button>
-        <button onClick={() => setShowAnswer(true)} style={styles.button}>
+
+        {maxShuffle - shuffleCount > 0 && (
+          <button onClick={reshuffleWord} className="button">
+            Shuffle Again ({maxShuffle - shuffleCount} left)
+          </button>
+        )}
+
+        <button onClick={revealAnswer} className="button">
           Reveal
         </button>
-        <button onClick={getNewWord} style={styles.button}>
-          Next
+
+        <button onClick={() => getNewWord(true)} className="button">
+          Next (-1 point)
         </button>
       </div>
     </div>
   );
 };
-
-const styles = {
-  container: {
-    color: "white",
-    backgroundColor: "black",
-    padding: "40px",
-    margin: "0 auto",
-    fontFamily: "sans-serif",
-    textAlign: "center",
-    height: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-  },
-  title: {
-    fontSize: "2rem",
-    marginBottom: "20px",
-  },
-  fadeIn: {
-    animation: "fadeIn 0.6s ease-in-out",
-  },
-  input: {
-    padding: "1rem 0rem",
-    textIndent: "20px",
-    width: "60%",
-    fontSize: "1.2rem",
-    marginBottom: "20px",
-    border: "1px solid #000",
-    outline: "none",
-    transition: "border-color 0.3s ease",
-  },
-  buttonRow: {
-    display: "flex",
-    justifyContent: "center",
-    gap: "10px",
-    marginBottom: "20px",
-  },
-  button: {
-    padding: "10px 16px",
-    fontSize: "1rem",
-    backgroundColor: "#000",
-    color: "#fff",
-    border: "none",
-    cursor: "pointer",
-    transition: "transform 0.2s ease, background-color 0.3s ease",
-  },
-  message: {
-    fontWeight: "bold",
-    marginTop: "10px",
-  },
-  scrambled: {
-    fontSize: "4rem",
-  },
-  hint: {
-    fontSize: "1.2rem",
-  },
-};
-
-// Add global styles manually or in your CSS file
-const styleSheet = document.styleSheets[0];
-styleSheet.insertRule(
-  `
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-`,
-  styleSheet.cssRules.length
-);
-
-styleSheet.insertRule(
-  `
-  input:focus {
-    border-color: #666;
-  }
-`,
-  styleSheet.cssRules.length
-);
-
-styleSheet.insertRule(
-  `
-  button:hover {
-    transform: scale(1.05);
-    background-color: #333;
-  }
-`,
-  styleSheet.cssRules.length
-);
 
 export default App;
