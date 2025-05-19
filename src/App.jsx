@@ -33,6 +33,12 @@ function App() {
   const [score, setScore] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
 
+  // Best WPM per difficulty
+  const [bestWPM, setBestWPM] = useState(() => {
+    const stored = localStorage.getItem('bestWPM');
+    return stored ? JSON.parse(stored) : { easy: 0, medium: 0, hard: 0 };
+  });
+
   const inputRef = useRef(null);
   const timerRef = useRef(null);
 
@@ -128,6 +134,15 @@ function App() {
     const usedTime = totalTime - timeLeft;
     const wpm = Math.round((correctWords / usedTime) * 60);
     setFinalWPM(wpm);
+
+    setBestWPM(prev => {
+      const updated = { ...prev };
+      if (wpm > prev[difficulty]) {
+        updated[difficulty] = wpm;
+        localStorage.setItem('bestWPM', JSON.stringify(updated));
+      }
+      return updated;
+    });
   };
 
   const formatTime = (seconds) => {
@@ -203,6 +218,7 @@ function App() {
         <div className="sticky-header">
           <span>Time Left: {formatTime(timeLeft)}</span>
           <span className="score">Score: {score}</span>
+          <span className="best-wpm">Best WPM ({difficulty}): {bestWPM[difficulty]}</span>
         </div>
       )}
 
@@ -242,6 +258,7 @@ function App() {
             <div className="result">
               <h3>Final WPM: {finalWPM}</h3>
               <h3>Final Score: {score}</h3>
+              <h3>Best WPM ({difficulty}): {bestWPM[difficulty]}</h3>
               <button onClick={restartGame}>Restart (Same Difficulty)</button>
               <button onClick={resetGame}>Change Difficulty</button>
             </div>
