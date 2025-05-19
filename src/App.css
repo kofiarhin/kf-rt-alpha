@@ -27,12 +27,18 @@ input {
   font-size: 24px;
   border-radius: 4px;
   border: none;
+  width: 80%;
   margin-bottom: 1rem;
 }
 
 .score {
   font-size: 2rem;
   margin-top: 20px;
+}
+
+.score span {
+  font-size: 1rem;
+  color: red;
 }
 
 .game-over {
@@ -54,4 +60,14 @@ button {
 
 button:hover {
   background-color: #d9363e;
+}
+
+.hint {
+  font-size: 1.2rem;
+}
+
+.scrambled {
+  font-size: 4rem;
+  background-color: rgb(76, 57, 79);
+  padding: 1rem 2rem;
 }

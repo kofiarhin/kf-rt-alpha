@@ -22,6 +22,7 @@ const App = () => {
   const [shuffleCount, setShuffleCount] = useState(0);
   const [maxShuffle, setMaxShuffle] = useState(3);
   const [gameOver, setGameOver] = useState(false);
+  const [streak, setStreak] = useState(0);
 
   useEffect(() => {
     getNewWord();
@@ -42,6 +43,8 @@ const App = () => {
     setMessage("");
     setShowAnswer(false);
     setFadeKey((prev) => prev + 1);
+    setShuffleCount(0);
+    setStreak(0); // reset streak on skip
   };
 
   const reshuffleWord = () => {
@@ -52,16 +55,31 @@ const App = () => {
   };
 
   const checkGuess = () => {
-    if (guess.trim().toLowerCase() === current.word.toLowerCase()) {
-      setMessage("Correct!");
-      setScore((prev) => prev + 3);
+    const trimmedGuess = guess.trim().toLowerCase();
+    const correctAnswer = current.word.toLowerCase();
+
+    if (trimmedGuess === correctAnswer) {
+      const newStreak = streak + 1;
+
+      if (newStreak >= 3) {
+        setMessage("🔥 Streak Bonus! +10 Points");
+        setScore((prev) => prev + 10);
+        setStreak(0);
+      } else {
+        setMessage("Correct!");
+        setScore((prev) => prev + 3);
+        setStreak(newStreak);
+      }
+
       setMaxShuffle((prev) => prev + 1);
+
       setTimeout(() => {
         getNewWord();
       }, 800);
     } else {
       setMessage("Try again.");
       setScore((prev) => prev - 1);
+      setStreak(0); // reset streak on wrong answer
     }
   };
 
@@ -69,6 +87,7 @@ const App = () => {
     if (gameOver) return;
     setShowAnswer(true);
     setScore((prev) => prev - 1);
+    setStreak(0); // reset streak on reveal
     setTimeout(() => {
       getNewWord();
     }, 2000);
@@ -79,6 +98,7 @@ const App = () => {
     setMaxShuffle(3);
     setShuffleCount(0);
     setGameOver(false);
+    setStreak(0);
     getNewWord();
   };
 
@@ -95,11 +115,11 @@ const App = () => {
 
   return (
     <div className="container">
+      <h3 className="score">
+        Score: {score} <span> streak: {streak} </span>{" "}
+      </h3>
       <h1 className="title">Guess The Word</h1>
-      <h3 className="score">Score: {score}</h3>
-
       <div key={fadeKey} className="fadeIn">
-        <h2 className="label">Scrambled Word:</h2>
         <h1 className="scrambled">{scrambled}</h1>
         <p className="hint">
           <strong>Hint:</strong> {current.hint}
