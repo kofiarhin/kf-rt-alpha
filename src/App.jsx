@@ -201,9 +201,10 @@ function App() {
       <h1>Typing Game</h1>
 
       {isStarted && (
-        <div className="timer-box">
-          Time Left: {formatTime(timeLeft)}
-        </div>
+        <>
+          <div className="timer-box">Time Left: {formatTime(timeLeft)}</div>
+          <div className="score-box">Score: {score}</div>
+        </>
       )}
 
       {!isStarted && (
@@ -219,7 +220,6 @@ function App() {
         <>
           <div className="stats">
             <p>WPM: {finalWPM}</p>
-            <p>Score: {score}</p>
           </div>
 
           {isGameOver && (
