@@ -6,7 +6,7 @@
   padding: 0 20px;
 }
 
-/* Sticky Top Bar */
+/* Sticky Header */
 .sticky-header {
   position: sticky;
   top: 0;
@@ -21,11 +21,20 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
+.sticky-header span {
+  flex: 1;
+  text-align: center;
+}
+
 .sticky-header .score {
   text-align: right;
 }
 
-/* Difficulty Selection */
+.sticky-header .best-wpm {
+  text-align: left;
+}
+
+/* Difficulty Select */
 .difficulty-select h2 {
   margin-bottom: 20px;
 }
@@ -57,7 +66,7 @@
   font-weight: bold;
 }
 
-/* Typing Prompt */
+/* Prompt */
 .prompt {
   font-size: 1.5rem;
   line-height: 2.2rem;
@@ -69,7 +78,7 @@
   margin-bottom: 20px;
 }
 
-/* Words */
+/* Word Styling */
 .word {
   margin: 0 6px;
   color: gray;
@@ -121,7 +130,7 @@ input[type="text"]:disabled {
   text-shadow: 2px 2px black;
 }
 
-/* Results */
+/* Result */
 .result h2 {
   margin-top: 30px;
   font-size: 1.8rem;
