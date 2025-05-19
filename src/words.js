@@ -1,85 +1,200 @@
 
-
 const words = [
   {
-    word: "elephant",
-    hints: ["Largest land animal", "Has a trunk", "Famous for memory"],
+    word: "banana",
+    hints: ["Yellow fruit", "High in potassium", "Monkeys love it"],
   },
   {
-    word: "guitar",
-    hints: ["String instrument", "Often used in rock music", "Has frets on the neck"],
+    word: "zebra",
+    hints: ["Black and white stripes", "Lives in Africa", "Looks like a horse"],
   },
   {
-    word: "volcano",
-    hints: ["Erupts lava", "Formed by tectonic activity", "Can create new landforms"],
+    word: "rocket",
+    hints: ["Flies into space", "Launched vertically", "Powered by fuel"],
   },
   {
-    word: "pyramid",
-    hints: ["Ancient Egyptian structure", "Has triangular sides", "Used as a tomb"],
+    word: "mirror",
+    hints: ["Reflects image", "Used to check appearance", "Made of glass"],
   },
   {
-    word: "jungle",
-    hints: ["Dense forest", "Tropical climate", "Home to many wild animals"],
+    word: "island",
+    hints: ["Land surrounded by water", "Can be tropical", "Often isolated"],
   },
   {
-    word: "astronaut",
-    hints: ["Travels to space", "Wears a spacesuit", "Trains for zero gravity"],
+    word: "spider",
+    hints: ["Has eight legs", "Spins webs", "Some are venomous"],
   },
   {
-    word: "diamond",
-    hints: ["Precious gemstone", "Hardest natural material", "Used in engagement rings"],
+    word: "glacier",
+    hints: ["Large mass of ice", "Moves slowly", "Found in polar regions"],
   },
   {
-    word: "octopus",
-    hints: ["Has eight arms", "Can change color", "Very intelligent sea creature"],
+    word: "butterfly",
+    hints: ["Colorful wings", "Starts as caterpillar", "Pollinates flowers"],
   },
   {
-    word: "rainbow",
-    hints: ["Appears after rain", "Has seven colors", "Formed by light refraction"],
+    word: "thunder",
+    hints: ["Follows lightning", "Loud noise", "Storm-related"],
   },
   {
-    word: "telescope",
-    hints: ["Used to see stars", "Magnifies distant objects", "Commonly used in astronomy"],
+    word: "chocolate",
+    hints: ["Sweet treat", "Made from cocoa", "Often eaten as candy"],
   },
   {
-    word: "robot",
-    hints: ["Can be programmed", "Often made of metal", "Used in automation"],
+    word: "candle",
+    hints: ["Provides light", "Made of wax", "Used on cakes"],
   },
   {
-    word: "mountain",
-    hints: ["High elevation", "Climbed by hikers", "Formed by tectonic forces"],
+    word: "ladder",
+    hints: ["Used to climb", "Has rungs", "Leans against walls"],
   },
   {
-    word: "kangaroo",
-    hints: ["Native to Australia", "Has strong legs", "Carries baby in a pouch"],
+    word: "scooter",
+    hints: ["Two-wheeled vehicle", "Often electric", "Ridden while standing"],
   },
   {
-    word: "submarine",
-    hints: ["Moves underwater", "Used by navy", "Can launch torpedoes"],
+    word: "library",
+    hints: ["Houses books", "Quiet place", "Public or private"],
   },
   {
-    word: "penguin",
-    hints: ["Can't fly", "Lives in cold climates", "Waddles on land"],
+    word: "pencil",
+    hints: ["Used to write", "Has eraser", "Made of wood and graphite"],
   },
   {
-    word: "puzzle",
-    hints: ["Can be jigsaw or word-based", "Solves with logic", "Has many pieces"],
+    word: "battery",
+    hints: ["Stores power", "Has positive and negative ends", "Used in electronics"],
   },
   {
-    word: "desert",
-    hints: ["Dry and hot", "Cactus grows here", "Low rainfall"],
+    word: "whale",
+    hints: ["Largest mammal", "Lives in ocean", "Spouts water"],
   },
   {
-    word: "computer",
-    hints: ["Performs calculations", "Runs software", "Has a keyboard and screen"],
+    word: "helmet",
+    hints: ["Protects the head", "Worn by bikers", "Used in sports"],
   },
   {
-    word: "camera",
-    hints: ["Takes pictures", "Can be digital or film", "Has a lens"],
+    word: "notebook",
+    hints: ["Used to take notes", "Has pages", "Can be spiral-bound"],
   },
   {
-    word: "airplane",
-    hints: ["Flies in the sky", "Has wings and engines", "Used for travel"],
+    word: "moon",
+    hints: ["Orbits Earth", "Visible at night", "Has craters"],
+  },
+  {
+    word: "train",
+    hints: ["Runs on tracks", "Used for transport", "Can be high-speed"],
+  },
+  {
+    word: "lantern",
+    hints: ["Used for light", "Often carried", "Can use fuel or batteries"],
+  },
+  {
+    word: "painter",
+    hints: ["Uses a brush", "Creates art", "Can work on canvas or walls"],
+  },
+  {
+    word: "anchor",
+    hints: ["Used on boats", "Heavy metal object", "Keeps vessel in place"],
+  },
+  {
+    word: "bridge",
+    hints: ["Spans gaps", "Used for crossing", "Built over water or valleys"],
+  },
+  {
+    word: "lion",
+    hints: ["King of the jungle", "Has a mane", "Lives in prides"],
+  },
+  {
+    word: "cloud",
+    hints: ["Seen in the sky", "Made of vapor", "Can bring rain"],
+  },
+  {
+    word: "plumber",
+    hints: ["Fixes pipes", "Works with water systems", "Uses wrenches"],
+  },
+  {
+    word: "hat",
+    hints: ["Worn on head", "Can be stylish or functional", "Comes in many types"],
+  },
+  {
+    word: "carpet",
+    hints: ["Covers floors", "Soft and woven", "Comes in many colors"],
+  },
+  {
+    word: "microscope",
+    hints: ["Magnifies tiny things", "Used in labs", "Reveals cells"],
+  },
+  {
+    word: "keyboard",
+    hints: ["Has keys", "Used for typing", "Part of a computer"],
+  },
+  {
+    word: "statue",
+    hints: ["Sculpted figure", "Made of stone or metal", "Often decorative"],
+  },
+  {
+    word: "ticket",
+    hints: ["Used for entry", "Needed for travel or events", "Can be digital or paper"],
+  },
+  {
+    word: "balloon",
+    hints: ["Filled with air or helium", "Used in parties", "Can pop"],
+  },
+  {
+    word: "stethoscope",
+    hints: ["Used by doctors", "Listens to heartbeat", "Worn around neck"],
+  },
+  {
+    word: "tornado",
+    hints: ["Rotating storm", "Has strong winds", "Can destroy buildings"],
+  },
+  {
+    word: "vaccine",
+    hints: ["Prevents disease", "Given by injection", "Boosts immunity"],
+  },
+  {
+    word: "shark",
+    hints: ["Lives in ocean", "Has sharp teeth", "Apex predator"],
+  },
+  {
+    word: "wallet",
+    hints: ["Holds money", "Fits in pocket", "Can hold ID cards"],
+  },
+  {
+    word: "museum",
+    hints: ["Displays artifacts", "Educational", "Can be about art or history"],
+  },
+  {
+    word: "crayon",
+    hints: ["Used for coloring", "Often used by kids", "Waxy texture"],
+  },
+  {
+    word: "chef",
+    hints: ["Cooks professionally", "Wears a hat", "Works in a kitchen"],
+  },
+  {
+    word: "radio",
+    hints: ["Plays music", "Broadcasts news", "Operates on frequencies"],
+  },
+  {
+    word: "trumpet",
+    hints: ["Brass instrument", "Played by blowing", "Used in jazz"],
+  },
+  {
+    word: "bracelet",
+    hints: ["Worn on wrist", "Jewelry item", "Made of metal or beads"],
+  },
+  {
+    word: "ladle",
+    hints: ["Used to serve soup", "Has a long handle", "Scoop-shaped"],
+  },
+  {
+    word: "drum",
+    hints: ["Percussion instrument", "Played with sticks", "Has a membrane"],
+  },
+  {
+    word: "sailboat",
+    hints: ["Uses wind to move", "Has sails", "Floats on water"],
   },
 ];
 
