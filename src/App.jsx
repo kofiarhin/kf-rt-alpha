@@ -4,52 +4,70 @@ import './App.css';
 const sampleText = [
   'The quick brown fox jumps over the lazy dog',
   'Typing games improve your speed and accuracy',
-  'React is a powerful JavaScript library for building UIs'
+  'React is a powerful JavaScript library for building UIs',
+  'Discipline is the bridge between goals and accomplishment',
+  'Knowledge is power but enthusiasm pulls the switch'
 ];
+
+const difficulties = {
+  easy: 120,
+  medium: 60,
+  hard: 30
+};
 
 const getRandomText = () => sampleText[Math.floor(Math.random() * sampleText.length)];
 
 function App() {
-  const [targetText, setTargetText] = useState(getRandomText());
+  const [difficulty, setDifficulty] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [targetText, setTargetText] = useState('');
   const [wordList, setWordList] = useState([]);
   const [typedWords, setTypedWords] = useState([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
-  const [startTime, setStartTime] = useState(null);
-  const [endTime, setEndTime] = useState(null);
+  const [isStarted, setIsStarted] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   const inputRef = useRef(null);
   const timerRef = useRef(null);
 
   useEffect(() => {
-    setWordList(targetText.split(' '));
-    inputRef.current.focus();
-  }, [targetText]);
-
-  // Clean up timer on unmount
-  useEffect(() => {
     return () => clearInterval(timerRef.current);
   }, []);
 
-  const startTimer = () => {
-    timerRef.current = setInterval(() => {
-      setElapsedSeconds(prev => prev + 1);
-    }, 1000);
-  };
+  const handleDifficultySelect = (level) => {
+    const time = difficulties[level];
+    setDifficulty(level);
+    setTimeLeft(time);
+    setTargetText(getRandomText());
+    setIsStarted(true);
+    setIsFinished(false);
+    setTypedWords([]);
+    setUserInput('');
+    setCurrentWordIndex(0);
+    setWordList(getRandomText().split(' '));
 
-  const stopTimer = () => {
-    clearInterval(timerRef.current);
+    // Start countdown
+    timerRef.current = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          setIsFinished(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
   };
 
   const handleChange = (e) => {
-    const value = e.target.value;
+    if (isFinished) return;
 
-    if (!startTime) {
-      setStartTime(Date.now());
-      startTimer();
-    }
+    const value = e.target.value;
 
     if (value.endsWith(' ')) {
       const typedWord = value.trim();
@@ -59,12 +77,6 @@ function App() {
       setTypedWords([...typedWords, { typed: typedWord, correct: isCorrect }]);
       setUserInput('');
       setCurrentWordIndex(prev => prev + 1);
-
-      if (currentWordIndex + 1 === wordList.length) {
-        setEndTime(Date.now());
-        setIsFinished(true);
-        stopTimer();
-      }
     } else {
       setUserInput(value);
     }
@@ -72,8 +84,8 @@ function App() {
 
   const getWPM = () => {
     const correctWords = typedWords.filter(w => w.correct).length;
-    const minutes = elapsedSeconds / 60;
-    return minutes > 0 ? Math.round(correctWords / minutes) : 0;
+    const minutes = difficulties[difficulty] / 60;
+    return Math.round(correctWords / minutes);
   };
 
   const formatTime = (seconds) => {
@@ -83,18 +95,13 @@ function App() {
   };
 
   const restartGame = () => {
-    const newText = getRandomText();
-    setTargetText(newText);
-    setWordList(newText.split(' '));
-    setTypedWords([]);
-    setCurrentWordIndex(0);
-    setUserInput('');
-    setStartTime(null);
-    setEndTime(null);
-    setIsFinished(false);
-    setElapsedSeconds(0);
-    inputRef.current.focus();
     clearInterval(timerRef.current);
+    setDifficulty(null);
+    setIsStarted(false);
+    setIsFinished(false);
+    setUserInput('');
+    setTypedWords([]);
+    setTimeLeft(0);
   };
 
   const renderWordWithFeedback = (typed, expected) => {
@@ -139,24 +146,40 @@ function App() {
   return (
     <div className="App">
       <h1>Typing Game</h1>
-      <div className="stats">
-        <p>Time: {formatTime(elapsedSeconds)}</p>
-        <p>WPM: {getWPM()}</p>
-      </div>
-      <div className="prompt">{renderWords()}</div>
-      <input
-        ref={inputRef}
-        type="text"
-        value={userInput}
-        onChange={handleChange}
-        disabled={isFinished}
-        autoComplete="off"
-        style={{ width: '100%', padding: '10px', fontSize: '1.2rem' }}
-      />
-      {isFinished && (
-        <div>
-          <button onClick={restartGame}>Restart</button>
+
+      {!isStarted && (
+        <div className="difficulty-select">
+          <h2>Select Difficulty</h2>
+          <button onClick={() => handleDifficultySelect('easy')}>Easy (2 min)</button>
+          <button onClick={() => handleDifficultySelect('medium')}>Medium (1 min)</button>
+          <button onClick={() => handleDifficultySelect('hard')}>Hard (30 sec)</button>
         </div>
+      )}
+
+      {isStarted && (
+        <>
+          <div className="stats">
+            <p>Time Left: {formatTime(timeLeft)}</p>
+            <p>WPM: {getWPM()}</p>
+          </div>
+          <div className="prompt">{renderWords()}</div>
+          <input
+            ref={inputRef}
+            type="text"
+            value={userInput}
+            onChange={handleChange}
+            disabled={isFinished}
+            autoComplete="off"
+            style={{ width: '100%', padding: '10px', fontSize: '1.2rem' }}
+          />
+          {isFinished && (
+            <div>
+              <h2>Time's Up!</h2>
+              <h3>Your WPM: {getWPM()}</h3>
+              <button onClick={restartGame}>Play Again</button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
