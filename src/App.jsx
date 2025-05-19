@@ -15,7 +15,7 @@ function App() {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [isFinished, setIsFinished] = useState(false);
-  const [jumpIndex, setJumpIndex] = useState(null); // <-- NEW
+  const [jumpIndex, setJumpIndex] = useState(null);
 
   const inputRef = useRef(null);
 
@@ -23,23 +23,27 @@ function App() {
     inputRef.current.focus();
   }, []);
 
-  const handleChange = (e) => {
-    const value = e.target.value;
+  const handleKeyDown = (e) => {
+    if (isFinished) return;
+
+    const nextChar = targetText[userInput.length];
+
     if (!startTime) setStartTime(Date.now());
 
-    if (value === targetText) {
-      setEndTime(Date.now());
-      setIsFinished(true);
+    if (e.key === nextChar) {
+      const newInput = userInput + e.key;
+      setUserInput(newInput);
+      setJumpIndex(userInput.length);
+
+      setTimeout(() => setJumpIndex(null), 300);
+
+      if (newInput === targetText) {
+        setEndTime(Date.now());
+        setIsFinished(true);
+      }
     }
 
-    // Set the jump index to last typed char if it's correct
-    const lastCharIndex = value.length - 1;
-    if (targetText[lastCharIndex] === value[lastCharIndex]) {
-      setJumpIndex(lastCharIndex);
-      setTimeout(() => setJumpIndex(null), 300); // Reset jump after animation
-    }
-
-    setUserInput(value);
+    e.preventDefault(); // Prevent typing incorrect characters
   };
 
   const getWPM = () => {
@@ -64,12 +68,8 @@ function App() {
       let className = '';
 
       if (i < userInput.length) {
-        if (char === userInput[i]) {
-          color = 'green';
-          if (i === jumpIndex) className = 'jump';
-        } else {
-          color = 'red';
-        }
+        color = 'green';
+        if (i === jumpIndex) className = 'jump';
       }
 
       return (
@@ -88,7 +88,8 @@ function App() {
         ref={inputRef}
         type="text"
         value={userInput}
-        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        onChange={() => {}} // prevent React warning
         disabled={isFinished}
         style={{ width: '100%', padding: '10px', fontSize: '1.2rem' }}
       />
