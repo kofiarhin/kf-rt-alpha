@@ -11,6 +11,8 @@ const getRandomText = () => sampleText[Math.floor(Math.random() * sampleText.len
 
 function App() {
   const [targetText, setTargetText] = useState(getRandomText());
+  const [wordList, setWordList] = useState([]);
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
@@ -20,40 +22,54 @@ function App() {
   const inputRef = useRef(null);
 
   useEffect(() => {
+    const words = targetText.split(' ');
+    setWordList(words);
     inputRef.current.focus();
-  }, []);
+  }, [targetText]);
 
   const handleKeyDown = (e) => {
     if (isFinished) return;
 
-    const nextChar = targetText[userInput.length];
-
     if (!startTime) setStartTime(Date.now());
 
-    if (e.key === nextChar) {
-      const newInput = userInput + e.key;
-      setUserInput(newInput);
-      setJumpIndex(userInput.length);
+    if (e.key === ' ') {
+      e.preventDefault();
 
-      setTimeout(() => setJumpIndex(null), 300);
+      if (userInput.trim() === wordList[currentWordIndex]) {
+        setJumpIndex(currentWordIndex);
+        setCurrentWordIndex(prev => prev + 1);
+        setUserInput('');
 
-      if (newInput === targetText) {
-        setEndTime(Date.now());
-        setIsFinished(true);
+        if (currentWordIndex + 1 === wordList.length) {
+          setEndTime(Date.now());
+          setIsFinished(true);
+        }
+
+        setTimeout(() => setJumpIndex(null), 300);
       }
+    } else if (e.key.length === 1 || e.key === 'Backspace') {
+      // Allow character input & backspace
+      return;
+    } else {
+      e.preventDefault(); // Block non-character junk
     }
+  };
 
-    e.preventDefault(); // Prevent typing incorrect characters
+  const handleChange = (e) => {
+    setUserInput(e.target.value);
   };
 
   const getWPM = () => {
-    const words = targetText.trim().split(/\s+/).length;
+    const words = wordList.length;
     const minutes = (endTime - startTime) / 60000;
     return Math.round(words / minutes);
   };
 
   const restartGame = () => {
-    setTargetText(getRandomText());
+    const newText = getRandomText();
+    setTargetText(newText);
+    setWordList(newText.split(' '));
+    setCurrentWordIndex(0);
     setUserInput('');
     setStartTime(null);
     setEndTime(null);
@@ -62,45 +78,13 @@ function App() {
     inputRef.current.focus();
   };
 
-  const renderColoredText = () => {
-    return targetText.split('').map((char, i) => {
-      let color = 'gray';
-      let className = '';
-
-      if (i < userInput.length) {
-        color = 'green';
-        if (i === jumpIndex) className = 'jump';
-      }
+  const renderWords = () => {
+    return wordList.map((word, i) => {
+      let className = 'word';
+      if (i < currentWordIndex) className += ' correct';
+      else if (i === currentWordIndex) className += ' current';
+      if (i === jumpIndex) className += ' jump';
 
       return (
-        <span key={i} className={className} style={{ color }}>
-          {char}
-        </span>
-      );
-    });
-  };
-
-  return (
-    <div className="App">
-      <h1>Typing Game</h1>
-      <p className="prompt">{renderColoredText()}</p>
-      <input
-        ref={inputRef}
-        type="text"
-        value={userInput}
-        onKeyDown={handleKeyDown}
-        onChange={() => {}} // prevent React warning
-        disabled={isFinished}
-        style={{ width: '100%', padding: '10px', fontSize: '1.2rem' }}
-      />
-      {isFinished && (
-        <div>
-          <h2>WPM: {getWPM()}</h2>
-          <button onClick={restartGame}>Restart</button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default App;
+        <span key={i} className={className}>
+          {
