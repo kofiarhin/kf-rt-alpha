@@ -37,7 +37,7 @@
   text-align: left;
 }
 
-/* Responsive: stack header items on small screens */
+/* Responsive Header */
 @media (max-width: 600px) {
   .sticky-header {
     flex-direction: column;
@@ -88,7 +88,7 @@
   background-color: #222;
 }
 
-/* Stats (WPM display) */
+/* Stats Display */
 .stats {
   display: flex;
   justify-content: center;
@@ -109,7 +109,7 @@
   margin-bottom: 20px;
 }
 
-/* Word Styles */
+/* Word Styling */
 .word {
   margin: 0 4px;
   color: gray;
@@ -148,7 +148,7 @@ input[type="text"]:disabled {
   color: #999;
 }
 
-/* Game Over Styling */
+/* Game Over */
 .game-over {
   margin-top: 20px;
   color: red;
@@ -203,4 +203,24 @@ input[type="text"]:disabled {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* Quit Button */
+.quit-button {
+  margin-top: 20px;
+}
+
+.quit-button button {
+  padding: 10px 25px;
+  font-size: 1rem;
+  background-color: #b00020;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.quit-button button:hover {
+  background-color: #7a0014;
 }
