@@ -28,8 +28,10 @@ function App() {
   const [userInput, setUserInput] = useState('');
   const [isStarted, setIsStarted] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-  const [finalWPM, setFinalWPM] = useState(0);
   const [timerStarted, setTimerStarted] = useState(false);
+  const [finalWPM, setFinalWPM] = useState(0);
+  const [score, setScore] = useState(0);
+  const [isGameOver, setIsGameOver] = useState(false);
 
   const inputRef = useRef(null);
   const timerRef = useRef(null);
@@ -53,6 +55,8 @@ function App() {
     setIsFinished(false);
     setFinalWPM(0);
     setTimerStarted(false);
+    setScore(0);
+    setIsGameOver(false);
     clearInterval(timerRef.current);
     setTimeout(() => inputRef.current?.focus(), 100);
   };
@@ -73,15 +77,36 @@ function App() {
   };
 
   const handleChange = (e) => {
-    if (isFinished) return;
+    if (isFinished || isGameOver) return;
 
     const value = e.target.value;
     if (!timerStarted) startTimer();
 
+    const expected = wordList[currentWordIndex] || '';
+    const lastCharIndex = value.length - 1;
+    const lastCharTyped = value[lastCharIndex];
+    const expectedChar = expected[lastCharIndex];
+
+    // scoring per character
+    if (lastCharTyped !== undefined) {
+      if (lastCharTyped === expectedChar) {
+        setScore(prev => prev + 1);
+      } else {
+        setScore(prev => {
+          const newScore = prev - 2;
+          if (newScore < 0) {
+            clearInterval(timerRef.current);
+            setIsGameOver(true);
+            setIsFinished(true);
+          }
+          return newScore;
+        });
+      }
+    }
+
     if (value.endsWith(' ')) {
       const typedWord = value.trim();
-      const expectedWord = wordList[currentWordIndex];
-      const isCorrect = typedWord === expectedWord;
+      const isCorrect = typedWord === expected;
 
       const updatedWords = [...typedWords, { typed: typedWord, correct: isCorrect }];
       setTypedWords(updatedWords);
@@ -106,8 +131,6 @@ function App() {
     setFinalWPM(wpm);
   };
 
-  const getWPM = () => finalWPM;
-
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
     const s = (seconds % 60).toString().padStart(2, '0');
@@ -129,6 +152,8 @@ function App() {
     setTimeLeft(0);
     setTotalTime(0);
     setFinalWPM(0);
+    setScore(0);
+    setIsGameOver(false);
     setTimerStarted(false);
   };
 
@@ -193,21 +218,31 @@ function App() {
       {isStarted && (
         <>
           <div className="stats">
-            <p>WPM: {getWPM()}</p>
+            <p>WPM: {finalWPM}</p>
+            <p>Score: {score}</p>
           </div>
+
+          {isGameOver && (
+            <div className="game-over">
+              <h1>GAME OVER</h1>
+              <p>Your score dropped below 0.</p>
+            </div>
+          )}
+
           <div className="prompt">{renderWords()}</div>
           <input
             ref={inputRef}
             type="text"
             value={userInput}
             onChange={handleChange}
-            disabled={isFinished}
+            disabled={isFinished || isGameOver}
             autoComplete="off"
           />
+
           {isFinished && (
             <div className="result">
-              <h2>Game Over</h2>
-              <h3>Your WPM: {getWPM()}</h3>
+              <h3>Final WPM: {finalWPM}</h3>
+              <h3>Final Score: {score}</h3>
               <button onClick={restartGame}>Restart (Same Difficulty)</button>
               <button onClick={resetGame}>Change Difficulty</button>
             </div>
