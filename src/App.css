@@ -71,3 +71,11 @@ button:hover {
   background-color: rgb(76, 57, 79);
   padding: 1rem 2rem;
 }
+
+.scrambled.correct {
+  background-color: green;
+}
+
+.scrambled.wrong {
+  background-color: red;
+}

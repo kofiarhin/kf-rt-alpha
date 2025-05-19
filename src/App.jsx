@@ -12,7 +12,7 @@ function shuffle(word) {
 }
 
 const App = () => {
-  const [current, setCurrent] = useState({ word: "", hint: "" });
+  const [current, setCurrent] = useState({ word: "", hints: [] });
   const [scrambled, setScrambled] = useState("");
   const [guess, setGuess] = useState("");
   const [message, setMessage] = useState("");
@@ -23,6 +23,8 @@ const App = () => {
   const [maxShuffle, setMaxShuffle] = useState(3);
   const [gameOver, setGameOver] = useState(false);
   const [streak, setStreak] = useState(0);
+  const [hintIndex, setHintIndex] = useState(0);
+  const [statusClass, setStatusClass] = useState("");
 
   useEffect(() => {
     getNewWord();
@@ -44,7 +46,9 @@ const App = () => {
     setShowAnswer(false);
     setFadeKey((prev) => prev + 1);
     setShuffleCount(0);
-    setStreak(0); // reset streak on skip
+    setStreak(0);
+    setHintIndex(0);
+    setStatusClass("");
   };
 
   const reshuffleWord = () => {
@@ -52,6 +56,7 @@ const App = () => {
     setScrambled(shuffle(current.word));
     setShuffleCount((prev) => prev + 1);
     setFadeKey((prev) => prev + 1);
+    setStatusClass("");
   };
 
   const checkGuess = () => {
@@ -60,6 +65,8 @@ const App = () => {
 
     if (trimmedGuess === correctAnswer) {
       const newStreak = streak + 1;
+
+      setStatusClass("correct");
 
       if (newStreak >= 3) {
         setMessage("🔥 Streak Bonus! +10 Points");
@@ -79,7 +86,8 @@ const App = () => {
     } else {
       setMessage("Try again.");
       setScore((prev) => prev - 1);
-      setStreak(0); // reset streak on wrong answer
+      setStreak(0);
+      setStatusClass("wrong");
     }
   };
 
@@ -87,7 +95,8 @@ const App = () => {
     if (gameOver) return;
     setShowAnswer(true);
     setScore((prev) => prev - 1);
-    setStreak(0); // reset streak on reveal
+    setStreak(0);
+    setStatusClass("");
     setTimeout(() => {
       getNewWord();
     }, 2000);
@@ -99,7 +108,14 @@ const App = () => {
     setShuffleCount(0);
     setGameOver(false);
     setStreak(0);
+    setHintIndex(0);
+    setStatusClass("");
     getNewWord();
+  };
+
+  const nextHint = () => {
+    setScore((prev) => prev - 1);
+    setHintIndex((prev) => (prev + 1) % current.hints.length);
   };
 
   if (gameOver) {
@@ -116,13 +132,13 @@ const App = () => {
   return (
     <div className="container">
       <h3 className="score">
-        Score: {score} <span> streak: {streak} </span>{" "}
+        Score: {score} <span> streak: {streak} </span>
       </h3>
       <h1 className="title">Guess The Word</h1>
-      <div key={fadeKey} className="fadeIn">
+      <div key={fadeKey} className={`fadeIn ${statusClass}`}>
         <h1 className="scrambled">{scrambled}</h1>
         <p className="hint">
-          <strong>Hint:</strong> {current.hint}
+          <strong>Hint:</strong> {current.hints[hintIndex]}
         </p>
       </div>
 
@@ -151,6 +167,10 @@ const App = () => {
             Shuffle Again ({maxShuffle - shuffleCount} left)
           </button>
         )}
+
+        <button onClick={nextHint} className="button">
+          Hint (-1 point)
+        </button>
 
         <button onClick={revealAnswer} className="button">
           Reveal
