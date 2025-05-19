@@ -15,6 +15,7 @@ function App() {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [isFinished, setIsFinished] = useState(false);
+  const [jumpIndex, setJumpIndex] = useState(null); // <-- NEW
 
   const inputRef = useRef(null);
 
@@ -29,6 +30,13 @@ function App() {
     if (value === targetText) {
       setEndTime(Date.now());
       setIsFinished(true);
+    }
+
+    // Set the jump index to last typed char if it's correct
+    const lastCharIndex = value.length - 1;
+    if (targetText[lastCharIndex] === value[lastCharIndex]) {
+      setJumpIndex(lastCharIndex);
+      setTimeout(() => setJumpIndex(null), 300); // Reset jump after animation
     }
 
     setUserInput(value);
@@ -46,20 +54,26 @@ function App() {
     setStartTime(null);
     setEndTime(null);
     setIsFinished(false);
+    setJumpIndex(null);
     inputRef.current.focus();
   };
 
   const renderColoredText = () => {
     return targetText.split('').map((char, i) => {
-      let color;
+      let color = 'gray';
+      let className = '';
+
       if (i < userInput.length) {
-        color = char === userInput[i] ? 'green' : 'red';
-      } else {
-        color = 'gray';
+        if (char === userInput[i]) {
+          color = 'green';
+          if (i === jumpIndex) className = 'jump';
+        } else {
+          color = 'red';
+        }
       }
 
       return (
-        <span key={i} style={{ color }}>
+        <span key={i} className={className} style={{ color }}>
           {char}
         </span>
       );
@@ -69,7 +83,7 @@ function App() {
   return (
     <div className="App">
       <h1>Typing Game</h1>
-      <p>{renderColoredText()}</p>
+      <p className="prompt">{renderColoredText()}</p>
       <input
         ref={inputRef}
         type="text"
