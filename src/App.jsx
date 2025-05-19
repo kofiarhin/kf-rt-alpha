@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import words from "./words";
+import { easyWords, mediumWords, hardWords } from "./words";
 import "./App.css";
 
 function shuffle(word) {
@@ -11,13 +11,15 @@ function shuffle(word) {
   return arr.join("");
 }
 
-const difficultySettings = {
-  easy: 15,
-  medium: 10,
-  hard: 5,
+const DIFFICULTY_SETTINGS = {
+  easy: { words: easyWords, time: 15 },
+  medium: { words: mediumWords, time: 10 },
+  hard: { words: hardWords, time: 7 },
 };
 
 const App = () => {
+  const [difficulty, setDifficulty] = useState(null);
+  const [words, setWords] = useState([]);
   const [current, setCurrent] = useState({ word: "", hints: [] });
   const [scrambled, setScrambled] = useState("");
   const [guess, setGuess] = useState("");
@@ -33,17 +35,39 @@ const App = () => {
   const [statusClass, setStatusClass] = useState("");
   const [showUnscrambledBeforeGameOver, setShowUnscrambledBeforeGameOver] = useState(false);
   const [timer, setTimer] = useState(0);
-  const [difficulty, setDifficulty] = useState(null); // null until picked
-  const [gameStarted, setGameStarted] = useState(false);
-
   const timerRef = useRef(null);
 
-  // Only start game when difficulty picked
+  // Set words and timer once difficulty is selected
   useEffect(() => {
-    if (gameStarted) {
-      getNewWord();
+    if (!difficulty) return;
+    setWords(DIFFICULTY_SETTINGS[difficulty].words);
+    setTimer(DIFFICULTY_SETTINGS[difficulty].time);
+    resetGame();
+  }, [difficulty]);
+
+  // Timer countdown effect
+  useEffect(() => {
+    if (gameOver || !difficulty || !current.word) return;
+
+    if (timer === 0) {
+      setMessage("Time's up! -1 point");
+      setScore((prev) => prev - 1);
+      setStreak(0);
+      setShowAnswer(true);
+      clearInterval(timerRef.current);
+      setTimeout(() => {
+        setShowAnswer(false);
+        getNewWord(true);
+      }, 2000);
+      return;
     }
-  }, [gameStarted]);
+
+    timerRef.current = setTimeout(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearTimeout(timerRef.current);
+  }, [timer, gameOver, difficulty, current.word]);
 
   useEffect(() => {
     if (score < 0 && !gameOver) {
@@ -55,43 +79,8 @@ const App = () => {
     }
   }, [score, gameOver]);
 
-  useEffect(() => {
-    if (!gameStarted || gameOver || showAnswer) {
-      clearInterval(timerRef.current);
-      return;
-    }
-
-    clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setTimer((prev) => {
-        if (prev === 1) {
-          clearInterval(timerRef.current);
-          handleTimeout();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timerRef.current);
-  }, [current, showAnswer, gameOver, gameStarted]);
-
-  const handleTimeout = () => {
-    setMessage("Time's up! Revealing answer...");
-    setShowAnswer(true);
-    setScore((prev) => prev - 1);
-    setStreak(0);
-    setStatusClass("wrong");
-
-    setTimeout(() => {
-      setStatusClass("");
-      setShowAnswer(false);
-      getNewWord();
-    }, 3000);
-  };
-
   const getNewWord = (deductPoint = false) => {
-    if (gameOver || !gameStarted) return;
+    if (gameOver) return;
     if (deductPoint) setScore((prev) => prev - 1);
 
     const random = words[Math.floor(Math.random() * words.length)];
@@ -104,38 +93,37 @@ const App = () => {
     setShuffleCount(0);
     setHintIndex(0);
     setStatusClass("");
-    setTimer(difficultySettings[difficulty]);
+    setTimer(DIFFICULTY_SETTINGS[difficulty].time);
   };
 
   const reshuffleWord = () => {
-    if (shuffleCount >= maxShuffle || gameOver || showAnswer) return;
+    if (shuffleCount >= maxShuffle) return;
     setScrambled(shuffle(current.word));
     setShuffleCount((prev) => prev + 1);
     setFadeKey((prev) => prev + 1);
+    setTimer(DIFFICULTY_SETTINGS[difficulty].time); // Reset timer on reshuffle
   };
 
   const checkGuess = () => {
-    if (gameOver || showAnswer || !gameStarted) return;
-
     const trimmedGuess = guess.trim().toLowerCase();
     const correctAnswer = current.word.toLowerCase();
 
     if (trimmedGuess === correctAnswer) {
       const newStreak = streak + 1;
 
-      if (newStreak % 3 === 0) {
+      if (newStreak >= 3) {
         setMessage("🔥 Streak Bonus! +10 Points");
         setScore((prev) => prev + 10);
+        setStreak(0);
       } else {
         setMessage("Correct!");
         setScore((prev) => prev + 3);
+        setStreak(newStreak);
       }
 
-      setStreak(newStreak);
       setMaxShuffle((prev) => prev + 1);
       setStatusClass("correct");
-
-      clearInterval(timerRef.current);
+      clearTimeout(timerRef.current);
 
       setTimeout(() => {
         setStatusClass("");
@@ -152,62 +140,56 @@ const App = () => {
   };
 
   const revealAnswer = () => {
-    if (gameOver || showAnswer || !gameStarted) return;
-    clearInterval(timerRef.current);
+    if (gameOver) return;
     setShowAnswer(true);
     setScore((prev) => prev - 1);
     setStreak(0);
+    clearTimeout(timerRef.current);
     setTimeout(() => {
       getNewWord();
     }, 2000);
   };
 
   const nextHint = () => {
-    if (gameOver || showAnswer || !gameStarted) return;
+    if (gameOver) return;
     if (hintIndex < current.hints.length - 1) {
       setHintIndex((prev) => prev + 1);
       setScore((prev) => prev - 1);
       setMessage("");
+      setTimer(DIFFICULTY_SETTINGS[difficulty].time); // Reset timer on new hint
     }
   };
 
-  const restartGame = () => {
+  const resetGame = () => {
     setScore(0);
     setMaxShuffle(3);
     setShuffleCount(0);
     setGameOver(false);
     setStreak(0);
     setStatusClass("");
-    setTimer(0);
-    setGameStarted(false);
-    setDifficulty(null);
-    setCurrent({ word: "", hints: [] });
-    setScrambled("");
-    setGuess("");
     setMessage("");
-    setShowAnswer(false);
-    setFadeKey(0);
-    setHintIndex(0);
+    getNewWord();
   };
 
-  if (!gameStarted) {
-    // Show difficulty selection before game start
+  const handleDifficultySelect = (level) => {
+    setDifficulty(level);
+  };
+
+  if (!difficulty) {
     return (
       <div className="container">
-        <h1>Choose Difficulty to Start</h1>
-        {["easy", "medium", "hard"].map((level) => (
-          <button
-            key={level}
-            className="button"
-            onClick={() => {
-              setDifficulty(level);
-              setGameStarted(true);
-            }}
-            style={{ marginRight: 12, minWidth: 100 }}
-          >
-            {level.charAt(0).toUpperCase() + level.slice(1)}
+        <h1 className="title">Select Difficulty</h1>
+        <div className="buttonRow">
+          <button className="button" onClick={() => handleDifficultySelect("easy")}>
+            Easy
           </button>
-        ))}
+          <button className="button" onClick={() => handleDifficultySelect("medium")}>
+            Medium
+          </button>
+          <button className="button" onClick={() => handleDifficultySelect("hard")}>
+            Hard
+          </button>
+        </div>
       </div>
     );
   }
@@ -225,7 +207,7 @@ const App = () => {
     return (
       <div className="container">
         <h1 className="game-over">GAME OVER</h1>
-        <button className="button" onClick={restartGame}>
+        <button className="button" onClick={resetGame}>
           Restart
         </button>
       </div>
@@ -235,9 +217,8 @@ const App = () => {
   return (
     <div className="container">
       <h3 className="score">
-        Score: {score} <span> streak: {streak} </span>
+        Score: {score} <span> Streak: {streak} </span> <span> Time: {timer}s </span>
       </h3>
-      <h3>Time Left: {timer}s</h3>
       <h1 className="title">Guess The Word</h1>
       <div key={fadeKey} className={`fadeIn ${statusClass}`}>
         <h1 className="scrambled">{scrambled}</h1>
@@ -259,29 +240,28 @@ const App = () => {
         onChange={(e) => setGuess(e.target.value)}
         placeholder="Type your guess"
         className="input"
-        disabled={showAnswer}
       />
 
       <div className="buttonRow">
-        <button onClick={checkGuess} className="button" disabled={showAnswer}>
+        <button onClick={checkGuess} className="button">
           Submit
         </button>
 
-        {maxShuffle - shuffleCount > 0 && !showAnswer && (
+        {maxShuffle - shuffleCount > 0 && (
           <button onClick={reshuffleWord} className="button">
             Shuffle Again ({maxShuffle - shuffleCount} left)
           </button>
         )}
 
-        <button onClick={nextHint} className="button" disabled={showAnswer}>
+        <button onClick={nextHint} className="button">
           Hint (-1 point)
         </button>
 
-        <button onClick={revealAnswer} className="button" disabled={showAnswer}>
-          Reveal
+        <button onClick={revealAnswer} className="button">
+          Reveal (-1 point)
         </button>
 
-        <button onClick={() => getNewWord(true)} className="button" disabled={showAnswer}>
+        <button onClick={() => getNewWord(true)} className="button">
           Next (-1 point)
         </button>
       </div>
