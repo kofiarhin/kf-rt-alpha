@@ -43,7 +43,6 @@ function App() {
     return () => clearInterval(timerRef.current);
   }, []);
 
-  // ✅ Auto-focus input when game starts
   useEffect(() => {
     if (isStarted && !isFinished && !isGameOver && countdown === null) {
       inputRef.current?.focus();
@@ -70,7 +69,6 @@ function App() {
     setCountdown(3);
     clearInterval(timerRef.current);
 
-    // Start countdown before game begins
     let i = 3;
     const interval = setInterval(() => {
       i--;
@@ -288,6 +286,12 @@ function App() {
               <h3>Best WPM ({difficulty}): {bestWPM[difficulty]}</h3>
               <button onClick={restartGame}>Restart (Same Difficulty)</button>
               <button onClick={resetGame}>Change Difficulty</button>
+            </div>
+          )}
+
+          {!isFinished && !isGameOver && (
+            <div className="quit-button">
+              <button onClick={resetGame}>Quit</button>
             </div>
           )}
         </>
