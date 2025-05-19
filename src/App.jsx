@@ -43,6 +43,13 @@ function App() {
     return () => clearInterval(timerRef.current);
   }, []);
 
+  // ✅ Auto-focus input when game starts
+  useEffect(() => {
+    if (isStarted && !isFinished && !isGameOver && countdown === null) {
+      inputRef.current?.focus();
+    }
+  }, [isStarted, isFinished, isGameOver, countdown]);
+
   const handleDifficultySelect = (level) => {
     const text = getRandomText();
     const time = difficulties[level];
@@ -63,6 +70,7 @@ function App() {
     setCountdown(3);
     clearInterval(timerRef.current);
 
+    // Start countdown before game begins
     let i = 3;
     const interval = setInterval(() => {
       i--;
@@ -72,7 +80,6 @@ function App() {
         setTimeout(() => {
           setCountdown(null);
           setIsStarted(true);
-          setTimeout(() => inputRef.current?.focus(), 100);
         }, 1000);
       } else {
         setCountdown(i);
