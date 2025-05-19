@@ -23,6 +23,7 @@ const App = () => {
   const [guess, setGuess] = useState('');
   const [message, setMessage] = useState('');
   const [showAnswer, setShowAnswer] = useState(false);
+  const [fadeKey, setFadeKey] = useState(0);
 
   useEffect(() => {
     getNewWord();
@@ -36,6 +37,7 @@ const App = () => {
     setGuess('');
     setMessage('');
     setShowAnswer(false);
+    setFadeKey(prev => prev + 1); // Triggers re-animation
   };
 
   const checkGuess = () => {
@@ -50,8 +52,10 @@ const App = () => {
     <div style={styles.container}>
       <h1 style={styles.title}>Word Scramble</h1>
 
-      <p><strong>Scrambled Word:</strong> {scrambled}</p>
-      <p><strong>Hint:</strong> {current.hint}</p>
+      <div key={fadeKey} style={styles.fadeIn}>
+        <p><strong>Scrambled Word:</strong> {scrambled}</p>
+        <p><strong>Hint:</strong> {current.hint}</p>
+      </div>
 
       <input
         type="text"
@@ -67,7 +71,7 @@ const App = () => {
         <button onClick={getNewWord} style={styles.button}>Next</button>
       </div>
 
-      {message && <p>{message}</p>}
+      {message && <p style={styles.message}>{message}</p>}
       {showAnswer && <p><strong>Answer:</strong> {current.word}</p>}
     </div>
   );
@@ -87,6 +91,9 @@ const styles = {
     fontSize: '1.8rem',
     marginBottom: '20px',
   },
+  fadeIn: {
+    animation: 'fadeIn 0.6s ease-in-out',
+  },
   input: {
     padding: '10px',
     width: '80%',
@@ -94,6 +101,7 @@ const styles = {
     marginBottom: '20px',
     border: '1px solid #000',
     outline: 'none',
+    transition: 'border-color 0.3s ease',
   },
   buttonRow: {
     display: 'flex',
@@ -108,7 +116,34 @@ const styles = {
     color: '#fff',
     border: 'none',
     cursor: 'pointer',
+    transition: 'transform 0.2s ease, background-color 0.3s ease',
+  },
+  message: {
+    fontWeight: 'bold',
+    marginTop: '10px',
   },
 };
+
+// Add global styles manually or in your CSS file
+const styleSheet = document.styleSheets[0];
+styleSheet.insertRule(`
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+`, styleSheet.cssRules.length);
+
+styleSheet.insertRule(`
+  input:focus {
+    border-color: #666;
+  }
+`, styleSheet.cssRules.length);
+
+styleSheet.insertRule(`
+  button:hover {
+    transform: scale(1.05);
+    background-color: #333;
+  }
+`, styleSheet.cssRules.length);
 
 export default App;
