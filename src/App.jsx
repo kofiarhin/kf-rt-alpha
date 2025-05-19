@@ -32,14 +32,18 @@ const App = () => {
   const [hintIndex, setHintIndex] = useState(0);
   const [statusClass, setStatusClass] = useState("");
   const [showUnscrambledBeforeGameOver, setShowUnscrambledBeforeGameOver] = useState(false);
-  const [timer, setTimer] = useState(difficultySettings.medium);
-  const [difficulty, setDifficulty] = useState("medium"); // easy, medium, hard
+  const [timer, setTimer] = useState(0);
+  const [difficulty, setDifficulty] = useState(null); // null until picked
+  const [gameStarted, setGameStarted] = useState(false);
 
   const timerRef = useRef(null);
 
+  // Only start game when difficulty picked
   useEffect(() => {
-    getNewWord();
-  }, []);
+    if (gameStarted) {
+      getNewWord();
+    }
+  }, [gameStarted]);
 
   useEffect(() => {
     if (score < 0 && !gameOver) {
@@ -52,11 +56,7 @@ const App = () => {
   }, [score, gameOver]);
 
   useEffect(() => {
-    if (gameOver) {
-      clearInterval(timerRef.current);
-      return;
-    }
-    if (showAnswer) {
+    if (!gameStarted || gameOver || showAnswer) {
       clearInterval(timerRef.current);
       return;
     }
@@ -74,12 +74,7 @@ const App = () => {
     }, 1000);
 
     return () => clearInterval(timerRef.current);
-  }, [current, showAnswer, gameOver]);
-
-  useEffect(() => {
-    // Reset timer on difficulty change
-    setTimer(difficultySettings[difficulty]);
-  }, [difficulty]);
+  }, [current, showAnswer, gameOver, gameStarted]);
 
   const handleTimeout = () => {
     setMessage("Time's up! Revealing answer...");
@@ -96,7 +91,7 @@ const App = () => {
   };
 
   const getNewWord = (deductPoint = false) => {
-    if (gameOver) return;
+    if (gameOver || !gameStarted) return;
     if (deductPoint) setScore((prev) => prev - 1);
 
     const random = words[Math.floor(Math.random() * words.length)];
@@ -120,7 +115,7 @@ const App = () => {
   };
 
   const checkGuess = () => {
-    if (gameOver || showAnswer) return;
+    if (gameOver || showAnswer || !gameStarted) return;
 
     const trimmedGuess = guess.trim().toLowerCase();
     const correctAnswer = current.word.toLowerCase();
@@ -157,7 +152,7 @@ const App = () => {
   };
 
   const revealAnswer = () => {
-    if (gameOver || showAnswer) return;
+    if (gameOver || showAnswer || !gameStarted) return;
     clearInterval(timerRef.current);
     setShowAnswer(true);
     setScore((prev) => prev - 1);
@@ -168,7 +163,7 @@ const App = () => {
   };
 
   const nextHint = () => {
-    if (gameOver || showAnswer) return;
+    if (gameOver || showAnswer || !gameStarted) return;
     if (hintIndex < current.hints.length - 1) {
       setHintIndex((prev) => prev + 1);
       setScore((prev) => prev - 1);
@@ -183,9 +178,39 @@ const App = () => {
     setGameOver(false);
     setStreak(0);
     setStatusClass("");
-    setTimer(difficultySettings[difficulty]);
-    getNewWord();
+    setTimer(0);
+    setGameStarted(false);
+    setDifficulty(null);
+    setCurrent({ word: "", hints: [] });
+    setScrambled("");
+    setGuess("");
+    setMessage("");
+    setShowAnswer(false);
+    setFadeKey(0);
+    setHintIndex(0);
   };
+
+  if (!gameStarted) {
+    // Show difficulty selection before game start
+    return (
+      <div className="container">
+        <h1>Choose Difficulty to Start</h1>
+        {["easy", "medium", "hard"].map((level) => (
+          <button
+            key={level}
+            className="button"
+            onClick={() => {
+              setDifficulty(level);
+              setGameStarted(true);
+            }}
+            style={{ marginRight: 12, minWidth: 100 }}
+          >
+            {level.charAt(0).toUpperCase() + level.slice(1)}
+          </button>
+        ))}
+      </div>
+    );
+  }
 
   if (showUnscrambledBeforeGameOver) {
     return (
@@ -212,23 +237,6 @@ const App = () => {
       <h3 className="score">
         Score: {score} <span> streak: {streak} </span>
       </h3>
-      <div style={{ marginBottom: 12 }}>
-        <label><strong>Difficulty:</strong> </label>
-        {["easy", "medium", "hard"].map((level) => (
-          <button
-            key={level}
-            disabled={showAnswer === false && timer !== difficultySettings[difficulty]} // lock difficulty when round active
-            className={difficulty === level ? "button active" : "button"}
-            onClick={() => {
-              if (showAnswer || timer === difficultySettings[difficulty]) setDifficulty(level);
-            }}
-            style={{ marginRight: 8 }}
-          >
-            {level.charAt(0).toUpperCase() + level.slice(1)}
-          </button>
-        ))}
-      </div>
-
       <h3>Time Left: {timer}s</h3>
       <h1 className="title">Guess The Word</h1>
       <div key={fadeKey} className={`fadeIn ${statusClass}`}>
