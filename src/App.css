@@ -24,8 +24,49 @@ button {
 
 .jump {
   display: inline-block;
-  animation: jump 0.3s ease-out;
+  animation: jump 0.3s ease-.difficulty-select button,
+.result button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
 }
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  max-width: 400px;
+  margin: 10px auto;
+}
+
+.prompt {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  line-height: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.word {
+  margin: 0 4px;
+  color: gray;
+}
+
+.word.current {
+  text-decoration: underline;
+}
+
+.word.typed {
+  font-weight: bold;
+}
+
+.result {
+  margin-top: 20px;
+}
+
+
 
 @keyframes jump {
   0%   { transform: translateY(0); }
