@@ -1,103 +1,70 @@
 import React from 'react';
 import './App.css';
-import { FaTwitter, FaFacebook, FaInstagram, FaGithub } from 'react-icons/fa';
 
-const warMovies = [
+const trendingMovies = [
   {
-    title: 'Warfare',
-    year: 2025,
-    platform: 'A24',
-    description: 'Raw, unfiltered modern combat. One of the most brutally realistic war films in years.',
+    title: 'Nonnas',
+    description: 'A heartfelt comedy-drama starring Vince Vaughn about a Brooklyn man who opens a restaurant staffed by Italian grandmothers.',
   },
   {
-    title: 'Civil War',
-    year: 2024,
-    director: 'Alex Garland',
-    description: 'A fractured America. A team of war journalists. Feels disturbingly plausible.',
+    title: 'Paddington in Peru',
+    description: 'The third installment in the beloved family franchise, following Paddington Bear’s journey back to his roots.',
   },
   {
-    title: 'Blitz',
-    year: 2024,
-    director: 'Steve McQueen',
-    description: 'A mother and son surviving the London bombings. Emotionally brutal and grounded.',
+    title: 'Beetlejuice Beetlejuice',
+    description: 'A long-awaited sequel with Michael Keaton and Winona Ryder. Gothic style meets modern family adventure.',
   },
   {
-    title: 'The Ministry of Ungentlemanly Warfare',
-    year: 2024,
-    director: 'Guy Ritchie',
-    description: 'WWII covert ops unit. Stylish, violent, and darkly funny.',
+    title: 'Havoc',
+    description: 'Tom Hardy stars in this gritty crime-thriller about a detective navigating an underworld to save a politician’s son.',
   },
   {
-    title: 'The Six Triple Eight',
-    year: 2024,
-    director: 'Tyler Perry',
-    description: 'All-Black, all-female WWII battalion. Long-overdue recognition.',
+    title: 'Fear Street: Prom Queen',
+    description: 'A horror flick set in 1988 where a prom campaign turns into a deadly game in a cursed town.',
   },
   {
-    title: 'Sky Force',
-    year: 2025,
-    origin: 'India',
-    description: 'Akshay Kumar leads India’s first airstrike reenactment. High altitude and high tension.',
+    title: 'Kinda Pregnant',
+    description: 'A comedy starring Amy Schumer pretending to be pregnant—and accidentally changing lives.',
   },
   {
-    title: 'Uprising',
-    year: 2024,
-    origin: 'South Korea',
-    description: 'Japanese invasions of Korea. Brotherhood and betrayal at war’s edge.',
+    title: 'Revelations',
+    description: 'A dark South Korean psychological thriller based on a webtoon, filled with twists and mind games.',
   },
   {
-    title: 'World War III',
-    year: 2025,
-    genre: 'Speculative',
-    description: 'A global conflict scenario with psychological and strategic depth.',
+    title: 'The Life List',
+    description: 'A feel-good journey of rediscovery when a woman revisits her childhood dreams after her mother’s passing.',
   },
   {
-    title: 'Valiant One',
-    year: 2025,
-    description: 'Behind enemy lines with one military unit. Tight, tense, and raw.',
+    title: 'Plankton: The Movie',
+    description: 'Everyone’s favorite one-eyed villain from SpongeBob gets his own bizarre underwater adventure.',
   },
   {
-    title: 'Number 24',
-    year: 2025,
-    type: 'Biographical',
-    description: 'A soldier’s personal journey through war. Deep and character-driven.',
+    title: 'Heart Eyes',
+    description: 'Romance and horror collide in this slasher about a killer who stalks with glowing heart-shaped eyes.',
   },
 ];
 
 const App = () => {
   return (
     <div className="blog-container">
-      <h1>🔥 Top 10 War Movies You Need to Watch (2024–2025)</h1>
+      <h1>🔥 Top 10 Trending Movies on Netflix (May 2025)</h1>
       <p className="intro">
-        If you're a war film junkie looking for the latest heat, here’s the no-BS list of the best war films from
-        the last two years. Raw battlefields, fractured nations, and real consequences.
+        Looking for what’s hot right now on Netflix? These 10 picks are trending in the UK and worth your screen time.
       </p>
       <ol className="movie-list">
-        {warMovies.map((movie, index) => (
+        {trendingMovies.map((movie, index) => (
           <li key={index} className="movie-item">
-            <h2>{index + 1}. {movie.title} ({movie.year})</h2>
-            {movie.platform && <p><strong>Platform:</strong> {movie.platform}</p>}
-            {movie.director && <p><strong>Director:</strong> {movie.director}</p>}
-            {movie.origin && <p><strong>Origin:</strong> {movie.origin}</p>}
-            {movie.genre && <p><strong>Genre:</strong> {movie.genre}</p>}
-            {movie.type && <p><strong>Type:</strong> {movie.type}</p>}
+            <h2>{index + 1}. {movie.title}</h2>
             <p>{movie.description}</p>
           </li>
         ))}
       </ol>
       <p className="outro">
-        Whether you want historical realism, dystopian chaos, or psychological intensity, this lineup has it covered.
-        Add them to your watchlist. Then thank me later.
+        Whether you're in the mood for horror, humor, drama, or heart, this lineup has something fire. Watch them while they’re still trending.
       </p>
 
       <footer className="footer">
         <p>Created by Kofi Arhin</p>
-        <div className="social-icons">
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><FaFacebook /></a>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer"><FaGithub /></a>
-        </div>
       </footer>
     </div>
   );
