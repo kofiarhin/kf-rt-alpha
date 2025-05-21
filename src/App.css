@@ -1,4 +1,3 @@
-/* Root variables for consistent theming */
 :root {
   --bg-color: #121212;
   --text-color: #e0e0e0;
@@ -7,7 +6,7 @@
   --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Reset & base layout */
+/* Reset and base layout */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -18,8 +17,8 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family: var(--font-family);
-  line-height: 1.6;
   font-size: 16px;
+  line-height: 1.6;
 }
 
 /* Main container */
@@ -32,41 +31,40 @@ body {
 /* Heading */
 h1 {
   font-size: 2rem;
-  margin-bottom: 1rem;
   color: var(--accent-color);
   text-align: center;
+  margin-bottom: 1.5rem;
 }
 
-/* Introduction & outro */
+/* Intro/Outro paragraphs */
 .intro,
 .outro {
-  margin-bottom: 2rem;
-  font-size: 1rem;
   color: #ccc;
+  font-size: 1rem;
   text-align: center;
+  margin-bottom: 2rem;
 }
 
-/* Movie list */
+/* Movie list styles */
 .movie-list {
   list-style: decimal inside;
   padding-left: 0;
 }
 
 .movie-item {
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
+  padding: 1.5rem 0;
   border-bottom: 1px solid var(--border-color);
 }
 
 .movie-item h2 {
   font-size: 1.25rem;
-  margin-bottom: 0.5rem;
   color: #ffffff;
+  margin-bottom: 0.5rem;
 }
 
 .movie-item p {
-  margin: 0.25rem 0;
   color: #bbb;
+  margin: 0.25rem 0;
 }
 
 /* Footer */
@@ -79,37 +77,23 @@ h1 {
   font-size: 0.9rem;
 }
 
-.social-icons {
-  margin-top: 0.5rem;
-}
-
-.social-icons a {
-  margin: 0 0.5rem;
-  font-size: 1.5rem;
-  color: #ccc;
-  transition: color 0.3s ease;
-}
-
-.social-icons a:hover {
-  color: var(--accent-color);
-}
-
-/* Responsive adjustments */
+/* Responsive Design */
 @media (max-width: 768px) {
   .blog-container {
     padding: 1.5rem;
   }
 
   h1 {
-    font-size: 1.6rem;
+    font-size: 1.7rem;
   }
 
   .movie-item h2 {
     font-size: 1.1rem;
   }
 
-  .social-icons a {
-    font-size: 1.3rem;
+  .intro,
+  .outro {
+    font-size: 0.95rem;
   }
 }
 
@@ -119,11 +103,15 @@ h1 {
   }
 
   .movie-item {
-    padding-bottom: 1rem;
+    padding: 1rem 0;
   }
 
-  .social-icons a {
-    font-size: 1.2rem;
-    margin: 0 0.3rem;
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .intro,
+  .outro {
+    font-size: 0.9rem;
   }
 }
