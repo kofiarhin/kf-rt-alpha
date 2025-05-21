@@ -47,7 +47,7 @@ const trendingMovies = [
 const App = () => {
   return (
     <div className="blog-container">
-      <h1>🔥 Top 10 Trending Movies on Netflix</h1>
+      <h1>Top 10 Trending Movies on Netflix</h1>
       <p className="intro">(May 2025)</p>
       <p className="intro">
         Looking for what’s hot right now on Netflix? These 10 picks are trending in the UK and worth your screen time.
@@ -63,7 +63,7 @@ const App = () => {
       </ol>
 
       <p className="outro">
-        Whether you're in the mood for horror, humor, drama, or heart, this lineup has something fire. Watch them while they’re trending.
+        Whether you're in the mood for horror, humor, drama, or heart, this lineup has something worth watching. Check them out while they’re trending.
       </p>
 
       <footer className="footer">
