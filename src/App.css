@@ -1,22 +1,36 @@
+:root {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --accent-color: #ff5e00;
+  --border-color: #2a2a2a;
+}
+
+body {
+  background-color: var(--bg-color);
+  margin: 0;
+  padding: 0;
+}
+
 .blog-container {
   padding: 2rem;
   max-width: 800px;
   margin: auto;
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  background-color: #f9f9f9;
-  color: #222;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+  background-color: var(--bg-color);
 }
 
 h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
+  color: var(--accent-color);
 }
 
 .intro,
 .outro {
   margin-bottom: 2rem;
   font-size: 1rem;
+  color: #ccc;
 }
 
 .movie-list {
@@ -25,24 +39,28 @@ h1 {
 }
 
 .movie-item {
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #ddd;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .movie-item h2 {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   margin-top: 0.75rem;
   margin-bottom: 0.5rem;
+  color: #fff;
 }
 
 .movie-item p {
   margin: 0.25rem 0;
+  color: #bbb;
 }
 
 .movie-image {
   width: 100%;
   max-height: 300px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 0.75rem;
 }
