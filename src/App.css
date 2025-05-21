@@ -1,54 +1,67 @@
+/* Root variables for consistent theming */
 :root {
   --bg-color: #121212;
   --text-color: #e0e0e0;
   --accent-color: #ff5e00;
   --border-color: #2a2a2a;
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {
-  background-color: var(--bg-color);
+/* Reset & base layout */
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-.blog-container {
-  padding: 2rem;
-  max-width: 800px;
-  margin: auto;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: var(--text-color);
+body {
   background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  line-height: 1.6;
+  font-size: 16px;
 }
 
+/* Main container */
+.blog-container {
+  padding: 2rem;
+  max-width: 960px;
+  margin: auto;
+}
+
+/* Heading */
 h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
   color: var(--accent-color);
+  text-align: center;
 }
 
+/* Introduction & outro */
 .intro,
 .outro {
   margin-bottom: 2rem;
   font-size: 1rem;
   color: #ccc;
+  text-align: center;
 }
 
+/* Movie list */
 .movie-list {
   list-style: decimal inside;
   padding-left: 0;
 }
 
 .movie-item {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--border-color);
 }
 
 .movie-item h2 {
-  font-size: 1.3rem;
-  margin-top: 0.75rem;
+  font-size: 1.25rem;
   margin-bottom: 0.5rem;
-  color: #fff;
+  color: #ffffff;
 }
 
 .movie-item p {
@@ -56,11 +69,61 @@ h1 {
   color: #bbb;
 }
 
-.movie-image {
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  margin-bottom: 0.75rem;
+/* Footer */
+.footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.social-icons {
+  margin-top: 0.5rem;
+}
+
+.social-icons a {
+  margin: 0 0.5rem;
+  font-size: 1.5rem;
+  color: #ccc;
+  transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: var(--accent-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .blog-container {
+    padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .movie-item h2 {
+    font-size: 1.1rem;
+  }
+
+  .social-icons a {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 15px;
+  }
+
+  .movie-item {
+    padding-bottom: 1rem;
+  }
+
+  .social-icons a {
+    font-size: 1.2rem;
+    margin: 0 0.3rem;
+  }
 }
