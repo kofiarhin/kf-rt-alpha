@@ -6,59 +6,69 @@ const warMovies = [
     title: 'Warfare',
     year: 2025,
     platform: 'A24',
+    image: 'https://via.placeholder.com/600x300?text=Warfare',
     description: 'Raw, unfiltered modern combat. One of the most brutally realistic war films in years.',
   },
   {
     title: 'Civil War',
     year: 2024,
     director: 'Alex Garland',
+    image: 'https://via.placeholder.com/600x300?text=Civil+War',
     description: 'A fractured America. A team of war journalists. Feels disturbingly plausible.',
   },
   {
     title: 'Blitz',
     year: 2024,
     director: 'Steve McQueen',
+    image: 'https://via.placeholder.com/600x300?text=Blitz',
     description: 'A mother and son surviving the London bombings. Emotionally brutal and grounded.',
   },
   {
     title: 'The Ministry of Ungentlemanly Warfare',
     year: 2024,
     director: 'Guy Ritchie',
+    image: 'https://via.placeholder.com/600x300?text=Ministry+of+Ungentlemanly+Warfare',
     description: 'WWII covert ops unit. Stylish, violent, and darkly funny.',
   },
   {
     title: 'The Six Triple Eight',
     year: 2024,
     director: 'Tyler Perry',
+    image: 'https://via.placeholder.com/600x300?text=Six+Triple+Eight',
     description: 'All-Black, all-female WWII battalion. Long-overdue recognition.',
   },
   {
     title: 'Sky Force',
     year: 2025,
     origin: 'India',
+    image: 'https://via.placeholder.com/600x300?text=Sky+Force',
     description: 'Akshay Kumar leads India’s first airstrike reenactment. High altitude and high tension.',
   },
   {
     title: 'Uprising',
     year: 2024,
     origin: 'South Korea',
+    image: 'https://via.placeholder.com/600x300?text=Uprising',
     description: 'Japanese invasions of Korea. Brotherhood and betrayal at war’s edge.',
   },
   {
     title: 'World War III',
     year: 2025,
     genre: 'Speculative',
+    image: 'https://via.placeholder.com/600x300?text=World+War+III',
     description: 'A global conflict scenario with psychological and strategic depth.',
   },
   {
     title: 'Valiant One',
     year: 2025,
+    image: 'https://via.placeholder.com/600x300?text=Valiant+One',
     description: 'Behind enemy lines with one military unit. Tight, tense, and raw.',
   },
   {
     title: 'Number 24',
     year: 2025,
     type: 'Biographical',
+    image: 'https://via.placeholder.com/600x300?text=Number+24',
     description: 'A soldier’s personal journey through war. Deep and character-driven.',
   },
 ];
@@ -74,6 +84,7 @@ const App = () => {
       <ol className="movie-list">
         {warMovies.map((movie, index) => (
           <li key={index} className="movie-item">
+            <img src={movie.image} alt={`${movie.title} cover`} className="movie-image" />
             <h2>{index + 1}. {movie.title} ({movie.year})</h2>
             {movie.platform && <p><strong>Platform:</strong> {movie.platform}</p>}
             {movie.director && <p><strong>Director:</strong> {movie.director}</p>}
