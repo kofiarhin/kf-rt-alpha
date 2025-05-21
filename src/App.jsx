@@ -47,20 +47,23 @@ const trendingMovies = [
 const App = () => {
   return (
     <div className="blog-container">
-      <h1>🔥 Top 10 Trending Movies on Netflix (May 2025)</h1>
+      <h1>🔥 Top 10 Trending Movies on Netflix</h1>
+      <p className="intro">(May 2025)</p>
       <p className="intro">
         Looking for what’s hot right now on Netflix? These 10 picks are trending in the UK and worth your screen time.
       </p>
+
       <ol className="movie-list">
         {trendingMovies.map((movie, index) => (
           <li key={index} className="movie-item">
-            <h2>{index + 1}. {movie.title}</h2>
+            <h2>{movie.title}</h2>
             <p>{movie.description}</p>
           </li>
         ))}
       </ol>
+
       <p className="outro">
-        Whether you're in the mood for horror, humor, drama, or heart, this lineup has something fire. Watch them while they’re still trending.
+        Whether you're in the mood for horror, humor, drama, or heart, this lineup has something fire. Watch them while they’re trending.
       </p>
 
       <footer className="footer">
